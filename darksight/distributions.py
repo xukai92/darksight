@@ -1,13 +1,5 @@
 ### Load libraries
 
-import matplotlib
-matplotlib.use('Agg')           # for disabling graphical UI
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')         # for better looking
-import matplotlib.cm as cm      # for generating color list
-matplotlib.rcParams['xtick.direction'] = 'out'  # let x ticks to behind x-axis
-matplotlib.rcParams['ytick.direction'] = 'out'  # let y ticks to left y-axis
-
 # Utility
 import csv
 import time
@@ -69,6 +61,16 @@ class NormalFamily(Distribution):
         self.params = [mu, H]
         self.C = C
         self.D = D
+
+    @property
+    def mu(self):
+
+        return self.params[0]
+
+    @property
+    def H(self):
+
+        return self.params[1]
 
     def pre(self, y):
 
@@ -133,22 +135,27 @@ class Softmax(Distribution):
 
     def __init__(self, C):
 
-        W = torch.ones([C]) * np.log(10)
+        w = torch.ones([C]) * np.log(10)
 
-        self.params = [W]
+        self.params = [w]
+
+    @property
+    def w(self):
+
+        return self.params[0]
 
     def logpdf(self):
 
-        W, = self.params
+        w, = self.params
 
-        lp = W - log_sum_exp_stable_vec(W)
+        lp = w - log_sum_exp_stable_vec(w)
 
         return lp
 
     def pdf(self):
 
-        W, = self.params
+        w, = self.params
 
-        p = torch.exp(W) / torch.sum(torch.exp(W))
+        p = torch.exp(w) / torch.sum(torch.exp(w))
 
         return p

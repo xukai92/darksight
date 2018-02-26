@@ -3,7 +3,7 @@
 import matplotlib
 matplotlib.use('Agg')           # for disabling graphical UI
 import matplotlib.pyplot as plt
-plt.style.use('ggplot')         # for better looking
+plt.style.use('seaborn')         # for better looking
 import matplotlib.cm as cm      # for generating color list
 matplotlib.rcParams['xtick.direction'] = 'out'  # let x ticks to behind x-axis
 matplotlib.rcParams['ytick.direction'] = 'out'  # let y ticks to left y-axis
@@ -25,10 +25,56 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 from helper import *
+from distributions import *
+from classifier import *
 
 ### End of library loading
 
-class DarkSight:
+
+
+class Knowledge:
+
+    def __init__(self, logit_np, T=1):
+
+        self.T = T
+
+        logit = torch.from_numpy(logit_np).float()
+        
+        print("[Knowledge.__init__] {0} with size of {1} is loaded".format(type(logit), logit.size()))
+
+        # Generate teacher's label
+        self.label_pred_np = np.argmax(logit.numpy(), axis=1)
+
+        # C - #classes
+        # N - #data points
+        N, C = logit.size()
+
+        # Convert logit to probability
+        logit_div_by_T = logit / T
+        p = torch.exp(logit_div_by_T) / torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N,C)
+
+        # Log for numerical stability
+        log_p = logit_div_by_T - log_sum_exp_stable_mat(logit_div_by_T)
+
+        self.N = N
+        self.C = C
+
+        self.logit = logit
+        self.log_p = log_p
+
+    def ready(self, use_cuda, gpu_id):
+
+        if use_cuda:
+            
+            self.logit = self.logit.cuda(gpu_id)
+            self.log_p = self.log_p.cuda(gpu_id)
+
+        self.logit = Variable(self.logit, requires_grad=False)
+        self.log_p = Variable(self.log_p, requires_grad=False)
+
+
+
+class DarkSightGeneric:
 
     def __init__(self, klg, clf):
         '''
@@ -37,26 +83,26 @@ class DarkSight:
             clf         :   low-dimensional classifier
         '''
 
-        self.y = torch.zeros([klg.N, clf.like_dist.D])
+        self._y = torch.zeros([klg.N, clf.like_dist.D])
         self.klg = klg
         self.clf = clf
 
     def align(self):
 
         mu = self.clf.like_dist.params[0]
-        _, max_idcs = torch.max(self.klg.p, 1)
+        _, max_idcs = torch.max(self.klg.log_p, 1)
         
         for i in range(self.klg.N):
 
-            self.y[i, :] = mu[max_idcs[i]]
+            self._y[i, :] = mu[max_idcs[i]]
 
-    def ready(self, use_cuda, gpu_id):
+    def ready(self, use_cuda=True, gpu_id=0):
 
         if use_cuda:
 
-            self.y = self.y.cuda(gpu_id)
+            self._y = self._y.cuda(gpu_id)
 
-        self.y = Variable(self.y, requires_grad=True)
+        self._y = Variable(self._y, requires_grad=True)
 
         self.klg.ready(use_cuda, gpu_id)
         self.clf.ready(use_cuda, gpu_id)
@@ -64,11 +110,16 @@ class DarkSight:
     @property
     def params(self):
 
-        return [self.y] + self.clf.params
+        return [self._y] + self.clf.params
+
+    @property
+    def y(self):
+
+        return pt2np(self._y)
 
     def loss(self, a, b):
 
-        y = self.y
+        y = self._y
         log_p = self.klg.log_p
 
         loss = sym_kl_div_with_log_input(
@@ -76,14 +127,15 @@ class DarkSight:
 
         return loss
 
-    def train(self, num_epoch, batch_size, lrs, verbose_skip, do_annealing):
+    def train(self, num_epoch, lrs, batch_size=1000, verbose_skip=100, 
+                    do_annealing=False, annealing_length=1000, highest_T=10, annealing_stepsize=100):
 
         N = self.klg.N
         C = self.klg.C
         lr_cond, lr_y, lr_prior = lrs
 
         optimizer_cond  = optim.Adam([self.clf.like_dist.params[0]], lr=lr_cond)
-        optimizer_y     = optim.Adam([self.y],                       lr=lr_y)
+        optimizer_y     = optim.Adam([self._y],                       lr=lr_y)
         optimizer_prior = optim.Adam(self.clf.prior_dist.params,     lr=lr_prior)
 
         batches = map(lambda s: (s, s + batch_size) if s + batch_size <= N else (s, N),
@@ -95,35 +147,39 @@ class DarkSight:
 
         t = time.time()
 
-        print("------+-------")
-        print("Epoch |   Loss")
-        print("------+-------")
+        print("-------+--------+---")
+        print(" Epoch |  Loss  | T ")
+        print("-------+--------+---")
 
         for epoch in range(1, num_epoch + 1):
 
             if do_annealing:
 
-                if epoch < 1000:
-                    T = 1 + 9 * (1000 - epoch) / 1000
-                elif epoch == 1000:
-                    T = 1
-                    # Align
-                #     y = torch.zeros([self.klg.N, self.clf.like_dist.D])
-                #     mu = self.clf.like_dist.params[0].data
-                #     _, max_idcs = torch.max(self.klg.p.data, 1)
+                target_T = self.klg.T
 
-                #     for i in range(self.klg.N):
+                if epoch < annealing_length:
 
-                #         y[i, :] = mu[max_idcs[i]]
-                #     self.y = Variable(y, requires_grad=True).cuda()
+                    count_down_epoch = annealing_length - epoch + 1
+                    T = target_T + (highest_T - target_T) * count_down_epoch / annealing_length
+                    do_update = (count_down_epoch % annealing_stepsize) == 0
+
+                elif epoch == annealing_length:
+
+                    T = target_T
+                    do_update = True
+
+                else:
+
+                    do_update = False
                     
-                if epoch <= 1000:
+                if do_update:
+
                     logit_div_by_T = self.klg.logit / T
+                    
                     p = torch.exp(logit_div_by_T) / \
                         torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N, C)
 
-                    self.klg.log_p = logit_div_by_T - \
-                        log_sum_exp_stable_mat(logit_div_by_T)
+                    self.klg.log_p = logit_div_by_T - log_sum_exp_stable_mat(logit_div_by_T)       
             
             loss_run = 0
             iter_num = 0
@@ -148,214 +204,170 @@ class DarkSight:
             
             if epoch % verbose_skip == 0:
                 
-                print(" %4d | %4.3f" % (epoch, loss_run / iter_num))
+                print(" %5d | %5.4f | %d" % (epoch, loss_run / iter_num, T))
 
-        print("Time used: %f" % ( (time.time() - t) ))
+        print("Time used: %f" % (time.time() - t))
+
+        print("Final loss: %f" % (log["loss"][-1]))
+        print("Accuracy to teacher: %5.4f" % (self.acc_teacher() * 100))
 
         self.log = log
 
-    def plot_loss(self, output_path):
+    def acc_teacher(self):
+
+        N = self.klg.N
+        label_pred_np = self.klg.label_pred_np
+        y = self._y
+
+        post = self.clf.posterior(y)
+
+        _, label_pred = torch.max(post, 1)
+        label_pred_np = label_pred.data.cpu().numpy()
+
+        acc = float(np.sum(label_pred_np == label_pred_np)) / N
+
+        return acc
+
+    def plot_loss(self):
 
         log = self.log
 
-        fig = plt.figure(figsize=(16, 9))
+        fig = plt.figure(figsize=(8, 4.5))
         ax = fig.add_subplot(111)
-        p_loss = ax.plot(log["loss"])
+
+        p_loss = plt.plot(log["loss"])
         plt.xlabel("#epoch")
         plt.ylabel("loss")
         plt.legend([p_loss], ["loss"])
         plt.title("Loss v.s. #iterations")
 
-        fig.savefig(output_path + "loss.png")
-
         return fig, ax
 
-    def plot_mono(self, output_path):
+    def plot_y(self, color_on=True, mu_on=True, contour_on=False, labels=None, 
+                     use_cuda=True, gpu_id=0, contour_slices=100, contour_num=5):
 
-        y = self.y.cpu().data.numpy()
-        mu = self.clf.params[0].cpu().data.numpy()
+        y_np = self._y.data.cpu().numpy()
+        mu_np = self.clf.like_dist.params[0].cpu().data.numpy()
+        label_pred_np = self.klg.label_pred_np
+        C = self.klg.C
 
-        fig = plt.figure(figsize=(9/1.5, 9/1.5))
+        if not labels:
+
+            labels = list(range(C))
+
+        fig = plt.figure(figsize=(9, 9))
         ax = fig.add_subplot(111)
-        ax.scatter(y[:,0], y[:,1], alpha=0.7)
-        ax.scatter(mu[:,0], mu[:,1], s=64, marker='*')
 
-        fig.savefig(output_path + "mono.png")
+        if color_on:
 
-        pp = PdfPages(output_path + "mono.pdf")
-        fig.savefig(pp, format='pdf')
-        pp.close()
-        
+            colors = color_list = plt.cm.tab10(np.linspace(0, 1, C))
 
-        return fig, ax
-
-    def plot_color(self, output_path, label_str):
-
-        colors = cm.rainbow(np.linspace(0, 1, self.clf.like_dist.C))
-        # colors = plt.get_cmap("tab{0}".format(self.clf.like_dist.C)).colors
-
-        if label_str == "":
-            classes = map(lambda i:str(i), range(C))
+            for i in range(C):
+                mask_i = (label_pred_np == i)
+                plt.scatter(y_np[mask_i, 0], y_np[mask_i, 1], c=colors[i], label=labels[i], alpha=.9)
+                
         else:
-
-            classes = label_str.split(" ")
-
-        y = self.y.cpu().data.numpy()
-        mu = self.clf.params[0].cpu().data.numpy()
-        # label = self.klg.label.numpy()
-        label = np.argmax(self.klg.p.data.cpu().numpy(), axis=1)
-        wrong = self.klg.wid_np
-
-        selects = list(range(self.clf.like_dist.C))
-
-        fig = plt.figure(figsize=(9/1.75, 9/1.75))
-        ax = fig.add_subplot(111)
-        handles = []
-
-        for i in selects:
-            idcs = (label == i)
-            idcs_wrong = (label == i) & wrong
-            handles.append(
-                plt.scatter(y[idcs, 0], y[idcs, 1], 
-                            marker='.', color=colors[i], alpha=0.5, label="{0}".format(classes[i])))
-            handles.append(
-                plt.scatter(y[idcs_wrong, 0], y[idcs_wrong, 1], alpha=0.5, s=(32+16)/2,
-                            marker='x', color=colors[i]))
-
-            # handles.append(
-            #     plt.scatter(mu[i, 0], mu[i, 1], s=256,
-            #                 marker='*', color=colors[i], edgecolor='black', label="{0}".format(classes[i])))
-
-        plt.legend(handles=handles, loc='lower left', ncol=2)
-        # plt.xlabel("Dim 1")
-        # plt.ylabel("Dim 2")
-        # plt.title("Low dimensional representation of data")
-
-        fig.savefig(output_path + "color.png")
-
-        pp = PdfPages(output_path + "color.pdf")
-        fig.savefig(pp, format='pdf')
-        pp.close()
-        
-        return fig, ax
-
-    def plot_contour(self, output_path, label_str, use_cuda, gpu_id, delta=0.025):
-
-        delta = delta
-        y = self.y.cpu().data.numpy()
-        ranges = [np.min(y[:, 0]), np.max(y[:, 0]),
-                  np.min(y[:, 1]), np.max(y[:, 1])]
-        x_ = np.arange(ranges[0], ranges[1], delta)
-        y_ = np.arange(ranges[2], ranges[3], delta)
-        X, Y = np.meshgrid(x_, y_)
-
-        X_tensor = torch.from_numpy(X)
-        a, b = X_tensor.size()
-        X_tensor = X_tensor.view(a * b, 1)
-
-        Y_tensor = torch.from_numpy(Y)
-        a, b = Y_tensor.size()
-        Y_tensor = Y_tensor.view(a * b, 1)
-
-        # Convert to y
-        y_grid = torch.cat([X_tensor, Y_tensor], dim=1)
-
-        y_grid = y_grid.float()
-        if use_cuda:
-            y_grid = y_grid.cuda(gpu_id)
-        else:
-            y_grid = y_grid.cpu()
-        y_grid = Variable(y_grid, requires_grad=False)
-
-        # Compute p_x
-        _, p_x = self.clf.posterior(y_grid, return_Z=True)
-        p_x = p_x.view(a * b, 1)
-
-        # Transform from 1D to 2D for plotting
-        X_tensor = X_tensor.view(a, b)
-        Y_tensor = Y_tensor.view(a, b)
-        p_x = p_x.view(a, b)
-
-        # Create a simple contour plot with labels using default colors.  The
-        # inline argument to clabel will control whether the labels are draw
-        # over the line segments of the contour, removing the lines beneath
-        # the label
-        fig, ax = self.plot_color(output_path, label_str)
-        p_contour = plt.contour(X_tensor.cpu().numpy(), Y_tensor.cpu().numpy(), p_x.data.cpu().numpy(), alpha=0.5)
-        plt.clabel(p_contour, inline=1, fontsize=7)
-        plt.title(ax.title.get_text() + " with contour of P(x)")
-        fig.savefig(output_path + "contour.png")
-
-    def evaluate(self, output_path, use_cuda, gpu_id):
-
-        N = self.klg.N
-        label = self.klg.label
-        p = self.klg.p
-        y = self.y
-        logit = self.klg.logit
-        wrong = self.klg.wid_np
-
-        y_miss_var = Variable(torch.from_numpy(y.data.cpu().numpy()[wrong,:]))
-        p_miss_var = Variable(torch.from_numpy(p.data.cpu().numpy()[wrong,:]))
-        logit_miss_var = Variable(torch.from_numpy(logit.data.cpu().numpy()[wrong,:]))
-        
-        if use_cuda:
-            y_miss_var = y_miss_var.cuda(gpu_id)
-            p_miss_var = p_miss_var.cuda(gpu_id)
-            logit_miss_var = logit_miss_var.cuda(gpu_id)
-
-        post = self.clf.posterior(y)
-        log_post = self.clf.log_posterior(y)
-        post_miss = self.clf.posterior(y_miss_var)
-        log_post_miss = self.clf.log_posterior(y_miss_var)
-
-        evaluation = dict()
-
-        # loss_final = self.loss(0, N)
-        # print("Final loss: %.3f" % (loss_final.data[0]))
-        # evaluation["loss_final"] = loss_final.data[0]
-
-        _, label_pred = torch.max(post, 1)
-        label_pred_np = label_pred.data.cpu().numpy()
-        acc_ground = float(np.sum(label_pred_np == label.numpy())) / N
-        print("Accuracy (ground): %.3f" % (acc_ground))
-        evaluation["acc_ground"] = acc_ground
             
-        _, label_teacher = torch.max(logit, 1)
-        label_teacher_np = label_teacher.data.cpu().numpy()
-        acc_teacher = float(np.sum(label_pred_np == label_teacher_np)) / N
-        print("Accuracy (teacher): %.3f" % (acc_teacher))
-        evaluation["acc_teacher"] = acc_teacher
+            plt.scatter(y_np[:,0], y_np[:,1], alpha=.9, label="y")
 
-        evaluation.update(evaluate(post, p, post_miss, p_miss_var,
-                                   log_post, logit, log_post_miss, logit_miss_var))
+        if mu_on:
+            
+            plt.scatter(mu_np[:,0], mu_np[:,1], marker="*", c="white", alpha=.75,
+                        linewidths=1, s=200, edgecolors="black", label=r"$\mu$")
 
-        with open(output_path + 'evaluation.csv', 'wb') as f:  # Just use 'w' mode in 3.x
-            w = csv.DictWriter(f, evaluation.keys())
-            w.writeheader()
-            w.writerow(evaluation)
+        if contour_on:
 
-        return evaluation
+            x_ls = np.linspace(np.min(y_np[:, 0]), np.max(y_np[:, 0]), contour_slices)
+            y_ls = np.linspace(np.min(y_np[:, 1]), np.max(y_np[:, 1]), contour_slices)
+            X, Y = np.meshgrid(x_ls, y_ls)
+
+            X_tensor = torch.from_numpy(X)
+            a, b = X_tensor.size()
+            X_tensor = X_tensor.view(a * b, 1)
+
+            Y_tensor = torch.from_numpy(Y)
+            a, b = Y_tensor.size()
+            Y_tensor = Y_tensor.view(a * b, 1)
+
+            # Convert to y
+            y_grid = torch.cat([X_tensor, Y_tensor], dim=1)
+
+            y_grid = y_grid.float()
+            if use_cuda:
+                y_grid = y_grid.cuda(gpu_id)
+            else:
+                y_grid = y_grid.cpu()
+            y_grid = Variable(y_grid, requires_grad=False)
+
+            # Compute p_y
+            _, p_y = self.clf.posterior(y_grid, return_Z=True)
+            p_y = p_y.view(a * b, 1)
+
+            # Transform from 1D to 2D for plotting
+            X_tensor = X_tensor.view(a, b)
+            X_np = X_tensor.cpu().numpy()
+            Y_tensor = Y_tensor.view(a, b)
+            Y_np = Y_tensor.cpu().numpy()
+            p_y = p_y.view(a, b)
+            p_y_np = p_y.data.cpu().numpy()
+
+            p_contour = plt.contour(X_np, Y_np, p_y_np, levels=np.linspace(np.min(p_y_np), np.max(p_y_np), contour_num), alpha=0.5)
+
+        plt.legend(ncol=2)
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+
+        return fig, ax
 
     def output(self, output_path):
-        y = self.y
+        y = self._y
         N = self.klg.N
-        label = self.klg.label
+        C = self.klg.C
+        label = torch.from_numpy(self.klg.label_pred_np)
 
-        p_y_c, p_x = self.clf.posterior(y, return_Z=True)
-        ids = Variable(torch.arange(0, N).view(N,1).float())
+        p_y_c, p_y = self.clf.posterior(y, return_Z=True)
+        ids = Variable(torch.arange(0, N).view(N, 1).float())
 
         res = torch.cat([ids,
                         y.cpu(),
-                        label.view(N,1).float(), 
-                        p_x.cpu(),
+                        label.view(N, 1).float(), 
+                        p_y.cpu(),
                         p_y_c.cpu()], 
                         1)
         res = res.data.cpu().numpy()
 
-        np.savetxt(output_path + "result.csv", 
+        if output_path[-1] != "/":
+
+            output_path += "/"
+
+        np.savetxt(output_path + "darksight.csv", 
                     res, 
                     delimiter=',', 
-                    header="id,dim1,dim2,label,p_x," + \
-                           ",".join(map(lambda i: "p_x_" + str(i), range(10))), 
+                    header="id,dim1,dim2,label_pred,p_y," + \
+                           ",".join(map(lambda i: "p_y_" + str(i), range(C))), 
                     comments="")
+
+class DarkSight(DarkSightGeneric):
+
+    def __init__(self, klg, D=2):
+
+        cond = Student(klg.C, D)
+        prior = Softmax(klg.C)
+        nb = NaiveBayes(cond, prior)
+
+        DarkSightGeneric.__init__(self, klg, nb)
+
+    @property
+    def mu(self):
+
+        return pt2np(self.clf.like_dist.mu)
+
+    @property
+    def H(self):
+
+        return pt2np(self.clf.like_dist.H)
+
+    @property
+    def w(self):
+
+        return pt2np(self.clf.prior_dist.w)

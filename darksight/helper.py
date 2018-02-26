@@ -1,13 +1,5 @@
 ### Load libraries
 
-import matplotlib
-matplotlib.use('Agg')           # for disabling graphical UI
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')         # for better looking
-import matplotlib.cm as cm      # for generating color list
-matplotlib.rcParams['xtick.direction'] = 'out'  # let x ticks to behind x-axis
-matplotlib.rcParams['ytick.direction'] = 'out'  # let y ticks to left y-axis
-
 # Utility
 import csv
 import time
@@ -59,48 +51,12 @@ def sym_kl_div_with_log_input(log_P, log_Q):
         0.5 * torch.sum(torch.exp(log_Q) * (log_Q - log_P))
     return div_total / n
 
-class Knowledge:
+def pt2np(pt):
 
-    def __init__(self, path_to_logit, data_type="csv", T=1):
+    if type(pt) == torch.autograd.variable.Variable:
 
-        if data_type == "csv":
-            logit_f = open(path_to_logit, "r")
-            logit_np = np.loadtxt(logit_f)
-            logit = torch.from_numpy(logit_np).float()
-        elif data_type == "pt":
-            logit = torch.load(path_to_logit)
-        else:
-            print("[Knowledge.__init__] unknown data type of logit: {0}".format(data_type))
-            raise
-        
-        print("[Knowledge.__init__] {0} with size of {1} is loaded".format(type(logit), logit.size()))
+        return pt.cpu().data.numpy()
 
-        # C - #classes
-        # N - #data points
-        N, C = logit.size()
+    else:
 
-        # Convert logit to probability
-        logit_div_by_T = logit / T
-        p = torch.exp(logit_div_by_T) / torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N,C)
-
-        # Log for numerical stability
-        log_p = logit_div_by_T - log_sum_exp_stable_mat(logit_div_by_T)
-        
-        self.N = N
-        self.C = C
-
-        self.logit = logit
-        self.p = p
-        self.log_p = log_p
-
-    def ready(self, use_cuda, gpu_id):
-
-        if use_cuda:
-            
-            self.logit = self.logit.cuda(gpu_id)
-            self.p = self.p.cuda(gpu_id)
-            self.log_p = self.log_p.cuda(gpu_id)
-
-        self.logit = Variable(self.logit, requires_grad=False)
-        self.p = Variable(self.p, requires_grad=False)
-        self.log_p = Variable(self.log_p, requires_grad=False)
+        return pt.cpu().numpy()

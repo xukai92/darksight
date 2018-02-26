@@ -1,61 +1,204 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-
+<html lang="en">
 <head>
-    <title>Visualizing Black Box Classifiers by Knowledge Distillation - Demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>DarkSight - Interpreting Deep Classifier by Visual Distillation of Dark Knowledge</title>
+
+  <!-- CSS  -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection"/>
+  <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection"/>
 </head>
-
-
-<!-- Compiled and minified CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-
-<!-- Compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
-<style>
-    body {
-        font: 10px sans-serif;
-    }
-
-    .axis path,
-    .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
-
-    .dot {
-        stroke: #ecf0f1;
-    }
-</style>
-
-<script src="https://d3js.org/d3.v3.min.js"></script>
 <body>
-    <div class="row">
-        <div class="col s12">
-            <ul class="tabs">
-                <li class="tab col s3">
-                    <a class="active" href="#mnist_div">MNIST</a>
-                </li>
-                <li class="tab col s3">
-                    <a href="#cifar_div">Cifar-10</a>
-                </li>
-            </ul>
+  <nav class="white" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo">DarkSight</a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="https://github.com/xukai92/darksight">GitHub</a></li>
+        <li><a href="/demo.html">Demo</a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="https://github.com/xukai92/darksight">GitHub</a></li>
+        <li><a href="/demo.html">Demo</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+
+  <div id="index-banner" class="parallax-container">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <br><br>
+        <h1 class="header center teal-text text-lighten-2">DarkSight</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">Interpreting Deep Classifier by Visual Distillation of Dark Knowledge</h5>
         </div>
-        <div id="mnist_div" class="col s12"></div>
-        <div id="cifar_div" class="col s12"></div>
+        <!-- <div class="row center">
+          <a href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">Get Started</a>
+        </div> -->
+        <!-- <br><br> -->
+      </div>
+    </div>
+    <div class="parallax"><img src="dark-knowledge-1.jpg" alt="Dark knowledge img 1"></div>
+  </div>
+
+
+  <div class="container">
+    <div class="section">
+
+        <div class="row">
+        <div class="col s12 center">
+            <h3><i class="mdi-content-send brown-text"></i></h3>
+            <h4>Abstract</h4>
+            <p class="left-align light">
+            Interpreting black box classifiers, such as deep
+            networks, allows an analyst to validate a classifier
+            before it is deployed in a high-stakes setting. A
+            natural idea is to visualize the deep network’s rep-
+            resentations, so as to “see what the network sees”.
+            In this paper, we demonstrate that standard dimension
+            reduction methods in this setting can yield
+            uninformative or even misleading visualizations.
+            Instead, we present DarkSight, which visually
+            summarizes the predictions of a classifier in a way
+            inspired by notion of dark knowledge. DarkSight
+            embeds the data points into a low-dimensional
+            space such that it is easy to compress the deep
+            classifier into a simpler one, essentially combining
+            model compression and dimension reduction.
+            We compare DarkSight against t-SNE both qualitatively
+            and quantitatively, demonstrating that
+            DarkSight visualizations are more informative.
+            Our method additionally yields a new confidence
+            measure based on dark knowledge by quantifying
+            how unusual is a given vector of predictions.
+            </p>
+        </div>
+        </div>
+
+    </div>
+    </div>
+    
+
+
+  <div class="parallax-container valign-wrapper">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <div class="row center">
+          <h5 class="header col s12 light">See what the network sees by performing dimension reduction and model compression jointly.</h5>
+        </div>
+      </div>
+    </div>
+    <div class="parallax"><img src="dark-knowledge-2.jpg" alt="Dark knowledge img 2"></div>
+  </div>
+  <div class="container">
+    <div class="section">
+
+        <!--   Icon Section   -->
+        <div class="row">
+
+        <div class="col s12 m4">
+            <div class="icon-block">
+            <h2 class="center brown-text"><i class="material-icons">visibility</i></h2>
+            <h5 class="center">Looking into LeNet on MNIST</h5>
+
+            <p class="light">
+                <img class="materialboxed" data-caption="2D Scatter Plot for LeNet on MNIST" width="100%" src="./lenet-mnist.png">
+            </p>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="icon-block">
+            <h2 class="center brown-text"><i class="material-icons">priority_high</i></h2>
+            <h5 class="center">Outlier Detection</h5>
+
+            <p class="light">
+              Other than understanding decisions of the classifier, DarkSight can also help find outliers.
+              This can be done by simply picking instances on the corner of the scatter plot or using a confidence measure based on density of DarkSight embedding.
+              Some outliers detected are:
+            </p>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <h2 class="center brown-text"><i class="material-icons">flash_on</i></h2>
+                <h5 class="center">Fast Training</h5>
+
+                <p class="light">
+                  DarkSight is trained in O(N) and is GPU friendly. 
+                  With the PyTorch implementation we provided in <a href="https://github.com/xukai92/darksight">GitHub</a>, 
+                  DarkSight plot for a 10-class classifier on 10,000 instances can be generated within around 1.5 minutes with a single GPU.
+                </p>
+            </div>
+        </div>
+        </div>
+
+      </div>
     </div>
 
-</body>
 
-<script type="text/javascript" src="mnist.js"></script>
-<script type="text/javascript" src="cifar.js"></script>
+  <!-- <div class="parallax-container valign-wrapper">
+    <div class="section no-pad-bot">
+      <div class="container">
+        <div class="row center">
+          <h5 class="header col s12 light">A modern responsive front-end framework based on Material Design</h5>
+        </div>
+      </div>
+    </div>
+    <div class="parallax"><img src="background3.jpg" alt="Unsplashed background img 3"></div>
+  </div> -->
 
-<script>
-    $(document).ready(function () {
-            $('ul.tabs').tabs();
-        });
-    
-    $(document).ready(function () {
-        $('ul.tabs').tabs('select_tab', 'tab_id');
-    });
-</script>
+  <footer class="page-footer teal">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Acknowledgement</h5>
+          <p class="grey-text text-lighten-4">
+            We would like to specially thank Huawei Technologies Co. Ltd. for generously funding this project.
+            We thank Rich Caruana for his useful comments and suggestions on how to use DarkSight.
+            We also thank Cole Hurwitz for his careful grammar checking of the paper. 
+          </p>
+
+        </div>
+
+        <div class="col l3 s12">
+          <h5 class="white-text">Authors</h5>
+          <ul>
+            <li><a class="white-text" href="http://xuk.ai/">Kai Xu</a></li>
+            <li><a class="white-text" href="https://sites.google.com/site/daehpark/">Dae Hoon Park</a></li>
+            <li><a class="white-text" href="http://www.yichang-cs.com/">Chang Yi</a></li>
+            <li><a class="white-text" href="http://homepages.inf.ed.ac.uk/csutton/">Charles Sutton</a></li>
+          </ul>
+        </div>
+
+        <div class="col l3 s12">
+          <h5 class="white-text">Connect</h5>
+          <ul>
+              <li><a class="white-text" href="http://web.inf.ed.ac.uk/infweb/partners/edinburgh-huawei-research-lab">Edinburgh Huawei Research Lab</a></li>
+              <li><a class="white-text" href="http://groups.inf.ed.ac.uk/cup/">Charles's Uncertain People</a></li>
+              <li><a class="white-text" href="http://www.anc.ed.ac.uk/">Institute for Adaptive and Neural Computation, University of Edinburgh</a></li>
+
+              
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Made by <a class="brown-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!--  Scripts-->
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="js/materialize.js"></script>
+  <script src="js/init.js"></script>
+
+  </body>
+</html>

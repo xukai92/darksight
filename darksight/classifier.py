@@ -1,13 +1,5 @@
 ### Load libraries
 
-import matplotlib
-matplotlib.use('Agg')           # for disabling graphical UI
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')         # for better looking
-import matplotlib.cm as cm      # for generating color list
-matplotlib.rcParams['xtick.direction'] = 'out'  # let x ticks to behind x-axis
-matplotlib.rcParams['ytick.direction'] = 'out'  # let y ticks to left y-axis
-
 # Utility
 import csv
 import time
@@ -27,7 +19,7 @@ from helper import *
 
 ### End of library loading
 
-class CondX:
+class NaiveBayes:
 
     def __init__(self, like_dist, prior_dist):
 

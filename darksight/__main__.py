@@ -3,7 +3,7 @@
 import matplotlib
 matplotlib.use('Agg')           # for disabling graphical UI
 import matplotlib.pyplot as plt
-plt.style.use('ggplot')         # for better looking
+plt.style.use('seaborn')         # for better looking
 import matplotlib.cm as cm      # for generating color list
 matplotlib.rcParams['xtick.direction'] = 'out'  # let x ticks to behind x-axis
 matplotlib.rcParams['ytick.direction'] = 'out'  # let y ticks to left y-axis

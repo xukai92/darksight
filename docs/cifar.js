@@ -35,10 +35,10 @@ d3.csv("res-cifar.csv", function (error, data) {
         d.id = Math.round(Number(+d.id));
         d.dim1 = +d.dim1;
         d.dim2 = +d.dim2;
-        d.label = parseInt(d.label);
-        d.p_x = +d.p_x;
-        d.p_x_ = [+d.p_x_0, +d.p_x_1, +d.p_x_2, +d.p_x_3, +d.p_x_4,
-        +d.p_x_5, +d.p_x_6, +d.p_x_7, +d.p_x_8, +d.p_x_9];
+        d.label = parseInt(d.label_pred);
+        d.p_y = +d.p_y;
+        d.p_y_ = [+d.p_y_0, +d.p_y_1, +d.p_y_2, +d.p_y_3, +d.p_y_4,
+        +d.p_y_5, +d.p_y_6, +d.p_y_7, +d.p_y_8, +d.p_y_9];
     });
 
     // Set x- and y-axis's range
@@ -79,26 +79,26 @@ d3.csv("res-cifar.csv", function (error, data) {
         .attr("cy", function (d) { return yCifar(d.dim2); })
         .style("fill", function (d) { return color(d.label); })
         .on("click", function (d) {
-            legendCifar.select("#p_x_c").remove();
+            legendCifar.select("#p_y_c").remove();
             legendCifar.append("text")
-                .attr("id", "p_x_c")
+                .attr("id", "p_y_c")
                 .attr("x", widthPlot + 64)
                 .attr("y", 27)
                 .attr("dy", ".35em")
                 .style("text-anchor", "end")
-                .text(function (i) { return d.p_x_[i].toFixed(5); });
+                .text(function (i) { return d.p_y_[i].toFixed(5); });
 
-            legendCifar.selectAll("#p_x_c_rect").remove();
+            legendCifar.selectAll("#p_y_c_rect").remove();
             legendCifar.append("rect")
-                .attr("id", "p_x_c_rect")
+                .attr("id", "p_y_c_rect")
                 .attr("y", 18)
                 .attr("x", widthPlot + 81)
-                .attr("width", function (i) { return d.p_x_[i] * 64; })
+                .attr("width", function (i) { return d.p_y_[i] * 64; })
                 .attr("height", 18)
                 .style("fill", color);
 
             legendCifar.append("rect")
-                .attr("id", "p_x_c_rect")
+                .attr("id", "p_y_c_rect")
                 .attr("x", widthPlot + 81)
                 .attr("y", 18)
                 .attr("width", 64)
@@ -108,14 +108,14 @@ d3.csv("res-cifar.csv", function (error, data) {
                 .style("stroke", "black")
                 .style("stroke-width", function (i) { if (d.label == i) return 1; else return 0; });
 
-            svgCifar.select("#p_x").remove();
+            svgCifar.select("#p_y").remove();
             svgCifar.append("text")
-                .attr("id", "p_x")
+                .attr("id", "p_y")
                 .attr("x", 64 + 12)
                 .attr("y", height - 9)
                 .attr("dy", ".35em")
                 .style("text-anchor", "end")
-                .text(function () { return "" + d.p_x.toFixed(5); });
+                .text(function () { return "" + d.p_y.toFixed(5); });
 
             svgCifar.select("#x_img").remove();
             svgCifar.append("image")
@@ -158,14 +158,14 @@ d3.csv("res-cifar.csv", function (error, data) {
         .text("P(x) =");
 
     svgCifar.append("text")
-        .attr("id", "p_x")
+        .attr("id", "p_y")
         .attr("x", 64 - 4)
         .attr("y", height - 9)
         .attr("dy", ".35em")
         .style("text-anchor", "end")
         .text("?");
 
-    // Right p_x_c default
+    // Right p_y_c default
 
     svgCifar.append("text")
         .attr("x", widthPlot + 64 + 8)
@@ -175,7 +175,7 @@ d3.csv("res-cifar.csv", function (error, data) {
         .text("P(c = c' | x)");
 
     legendCifar.append("text")
-        .attr("id", "p_x_c")
+        .attr("id", "p_y_c")
         .attr("x", widthPlot + 64)
         .attr("y", 27)
         .attr("dy", ".35em")
@@ -183,7 +183,7 @@ d3.csv("res-cifar.csv", function (error, data) {
         .text("?");
 
     legendCifar.append("rect")
-        .attr("id", "p_x_c_rect")
+        .attr("id", "p_y_c_rect")
         .attr("x", widthPlot + 81)
         .attr("y", 18)
         .attr("width", 64)
