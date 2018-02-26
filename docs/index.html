@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <title>Visualizing Black Box Classifiers by Knowledge Distillation - Demo</title>
+</head>
+
+
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<style>
+    body {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .dot {
+        stroke: #ecf0f1;
+    }
+</style>
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<body>
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s3">
+                    <a class="active" href="#mnist_div">MNIST</a>
+                </li>
+                <li class="tab col s3">
+                    <a href="#cifar_div">Cifar-10</a>
+                </li>
+            </ul>
+        </div>
+        <div id="mnist_div" class="col s12"></div>
+        <div id="cifar_div" class="col s12"></div>
+    </div>
+
+</body>
+
+<script type="text/javascript" src="mnist.js"></script>
+<script type="text/javascript" src="cifar.js"></script>
+
+<script>
+    $(document).ready(function () {
+            $('ul.tabs').tabs();
+        });
+    
+    $(document).ready(function () {
+        $('ul.tabs').tabs('select_tab', 'tab_id');
+    });
+</script>
