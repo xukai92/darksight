@@ -123,6 +123,15 @@ d3.csv("res-mnist.csv", function (error, data) {
                 .attr('width', 112)
                 .attr('height', 112)
                 .attr("xlink:href", function () { return "images/mnist/test/" + d.id + ".jpg"; })
+
+            svg.select("#img_id").remove();
+            svg.append("text")
+                .attr("id", "img_id")
+                .attr("x", widthPlot + 64 + 64)
+                .attr("y", 18)
+                .attr("dy", ".35em")
+                .style("text-anchor", "end")
+                .text(function () { return "ID: " + d.id});
         });
 
     // Put legend

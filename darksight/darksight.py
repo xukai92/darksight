@@ -237,7 +237,7 @@ class DarkSightGeneric:
 
         p_loss = plt.plot(log["loss"])
         plt.xlabel("#epoch")
-        plt.ylabel("loss")
+        plt.ylabel("Loss")
         plt.legend([p_loss], ["loss"])
         plt.title("Loss v.s. #iterations")
 
@@ -319,7 +319,7 @@ class DarkSightGeneric:
 
         return fig, ax
 
-    def output(self, output_path):
+    def output(self, output_file_path):
         y = self._y
         N = self.klg.N
         C = self.klg.C
@@ -336,16 +336,12 @@ class DarkSightGeneric:
                         1)
         res = res.data.cpu().numpy()
 
-        if output_path[-1] != "/":
 
-            output_path += "/"
-
-        np.savetxt(output_path + "darksight.csv", 
-                    res, 
-                    delimiter=',', 
-                    header="id,dim1,dim2,label_pred,p_y," + \
+        np.savetxt(output_file_path, res, 
+                   delimiter=',', 
+                   header="id,dim1,dim2,label_pred,p_y," + \
                            ",".join(map(lambda i: "p_y_" + str(i), range(C))), 
-                    comments="")
+                   comments="")
 
 class DarkSight(DarkSightGeneric):
 
