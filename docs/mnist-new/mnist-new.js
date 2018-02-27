@@ -49,32 +49,15 @@ d3.csv("./res-mnist.csv", function(data) {
             data: labels,
             left: 'center'
         },
-        xAxis : [
-            {
-                type : 'value',
-                scale:true,
-                axisLabel : {
-                    formatter: '{value}'
-                },
-                splitLine: {
-                    show: false
-                }
-            }
-        ],
-        yAxis : [
-            {
-                type : 'value',
-                scale:true,
-                axisLabel : {
-                    formatter: '{value}'
-                },
-                splitLine: {
-                    show: false
-                }
-            }
-        ],
+        xAxis : {show: false},
+        yAxis : {show: false},
         series : series
     };
 
     myChart.setOption(option);
+
+    myChart.on('click', function (params) {
+        console.log(params);
+    });
+
 });
