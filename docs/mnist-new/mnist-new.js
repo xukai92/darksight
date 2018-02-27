@@ -1,11 +1,13 @@
 var myChart = window.echarts.init(document.getElementById('mnist_test'));
 
 var dataSet = {};
+var orgininal = [];
 d3.csv("./res-mnist.csv", function(data) {
     data.forEach(function(d, i) {
         d.id = Math.round(Number(+d.id));
         d.dim1 = +d.dim1;
         d.dim2 = +d.dim2;
+        d.index = i;
         d.label = parseInt(d.label_pred);
         d.p_y = +d.p_y;
         d.p_y_ = [+d.p_y_0, +d.p_y_1, +d.p_y_2, +d.p_y_3, +d.p_y_4,
@@ -13,19 +15,26 @@ d3.csv("./res-mnist.csv", function(data) {
         if (!dataSet[d.label]) {
             dataSet[d.label] = [];
         }
+        orgininal.push(d);
         dataSet[d.label].push(d);
     });
     var labels = Object.keys(dataSet);
     var series = [];
-    labels.forEach(function (l) {
+    var legends = labels.map(function (el) {
+        return {
+            name: el.toString()
+        }
+    });
+    console.log(legends);
+    labels.forEach(function (l, i) {
         var temp = {};
-        temp['Name'] = l;
+        temp['name'] = l;
         temp['type'] = 'scatter';
         temp['symbolSize'] = 5;
         temp['data'] = dataSet[l].map(function (d) {
-            return [d.dim1, d.dim2];
+            return [d.dim1, d.dim2, d.index];
         });
-        temp['animation'] = false;
+        // temp['animation'] = false;
         series.push(temp);
     });
     var option = {
@@ -46,8 +55,7 @@ d3.csv("./res-mnist.csv", function(data) {
         brush: {
         },
         legend: {
-            data: labels,
-            left: 'center'
+            data: legends
         },
         xAxis : {show: false},
         yAxis : {show: false},
@@ -57,7 +65,8 @@ d3.csv("./res-mnist.csv", function(data) {
     myChart.setOption(option);
 
     myChart.on('click', function (params) {
-        console.log(params);
+        var dataIndex = params['data'][2];
+        console.log(params, orgininal[dataIndex]);
     });
 
 });
