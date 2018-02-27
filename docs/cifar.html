@@ -30,22 +30,23 @@
 
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <body>
-    <div>
-        <div class="col s12" style="width: 100vw !important;">
-            <ul class="tabs" style="display: flex; flex-direction: row; justify-content: space-around">
-                <li class="tab col">
-                    <a class="active" href="./mnist.html">MNIST</a>
-                </li>
-                <li class="tab col">
-                    <a href="cifar.html">Cifar-10</a>
-                </li>
-                <li class="tab col">
-                    <a href="./mnist_new.html">TEST</a>
-                </li>
-            </ul>
-        </div>
-        <div id="mnist" style="height: 80vh; width: 100vw;">
+<div>
+    <div class="col s12" style="width: 100vw !important;">
+        <ul class="tabs" style="display: flex; flex-direction: row; justify-content: space-around">
+            <li class="tab col s3">
+                <a href="./mnist.html">MNIST</a>
+            </li>
+            <li class="tab col s3">
+                <a class="active" href="./cifar.html">Cifar-10</a>
+            </li>
+            <li class="tab col s3">
+                <a href="./mnist_new.html">TEST</a>
+            </li>
+        </ul>
     </div>
+    <div id="cifar" style="height: 80vh; width: 100vw;">
+</div>
+
 </body>
 
 <script>
@@ -54,12 +55,18 @@
         widthPlot = width - 256,
         height = 512 - margin.top - margin.bottom;
 
-    var color = d3.scale.category10();
-
     var x = d3.scale.linear()
         .range([0, widthPlot]);
 
     var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var color = d3.scale.category10();
+
+    var xCifar = d3.scale.linear()
+        .range([0, widthPlot]);
+
+    var yCifar = d3.scale.linear()
         .range([height, 0]);
 
     var xAxis = d3.svg.axis()
@@ -70,13 +77,15 @@
         .scale(y)
         .orient("left");
 
-    var svg = d3.select("#mnist").append("svg")
+    var svgCifar = d3.select("#cifar").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.csv("res-mnist.csv", function (error, data) {
+    var labelsCifar = ["plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"]
+
+    d3.csv("res-cifar.csv", function (error, data) {
         if (error) throw error;
 
         // Convert string to int
@@ -91,11 +100,11 @@
         });
 
         // Set x- and y-axis's range
-        x.domain(d3.extent(data, function (d) { return d.dim1; })).nice();
-        y.domain(d3.extent(data, function (d) { return d.dim2; })).nice();
+        xCifar.domain(d3.extent(data, function (d) { return d.dim1; })).nice();
+        yCifar.domain(d3.extent(data, function (d) { return d.dim2; })).nice();
 
         // Set x-axis's label
-        svg.append("g")
+        svgCifar.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis)
@@ -107,7 +116,7 @@
             .text("Dim 1");
 
         // Set y-axis's label
-        svg.append("g")
+        svgCifar.append("g")
             .attr("class", "y axis")
             .call(yAxis)
             .append("text")
@@ -119,17 +128,17 @@
             .text("Dim 2")
 
         // Make sactters
-        svg.selectAll(".dot")
+        svgCifar.selectAll(".dot")
             .data(data)
             .enter().append("circle")
             .attr("class", "dot")
             .attr("r", 4)
-            .attr("cx", function (d) { return x(d.dim1); })
-            .attr("cy", function (d) { return y(d.dim2); })
+            .attr("cx", function (d) { return xCifar(d.dim1); })
+            .attr("cy", function (d) { return yCifar(d.dim2); })
             .style("fill", function (d) { return color(d.label); })
             .on("click", function (d) {
-                legend.select("#p_y_c").remove();
-                legend.append("text")
+                legendCifar.select("#p_y_c").remove();
+                legendCifar.append("text")
                     .attr("id", "p_y_c")
                     .attr("x", widthPlot + 64)
                     .attr("y", 27)
@@ -137,8 +146,8 @@
                     .style("text-anchor", "end")
                     .text(function (i) { return d.p_y_[i].toFixed(5); });
 
-                legend.selectAll("#p_y_c_rect").remove();
-                legend.append("rect")
+                legendCifar.selectAll("#p_y_c_rect").remove();
+                legendCifar.append("rect")
                     .attr("id", "p_y_c_rect")
                     .attr("y", 18)
                     .attr("x", widthPlot + 81)
@@ -146,7 +155,7 @@
                     .attr("height", 18)
                     .style("fill", color);
 
-                legend.append("rect")
+                legendCifar.append("rect")
                     .attr("id", "p_y_c_rect")
                     .attr("x", widthPlot + 81)
                     .attr("y", 18)
@@ -157,8 +166,8 @@
                     .style("stroke", "black")
                     .style("stroke-width", function (i) { if (d.label == i) return 1; else return 0; });
 
-                svg.select("#p_y").remove();
-                svg.append("text")
+                svgCifar.select("#p_y").remove();
+                svgCifar.append("text")
                     .attr("id", "p_y")
                     .attr("x", 64 + 12)
                     .attr("y", height - 9)
@@ -166,56 +175,47 @@
                     .style("text-anchor", "end")
                     .text(function () { return "" + d.p_y.toFixed(5); });
 
-                svg.select("#x_img").remove();
-                svg.append("image")
+                svgCifar.select("#x_img").remove();
+                svgCifar.append("image")
                     .attr("id", "x_img")
                     .attr("x", widthPlot + 32)
                     .attr("y", 200 + 64)
-                    .attr('width', 112)
-                    .attr('height', 112)
-                    .attr("xlink:href", function () { return "images/mnist/test/" + d.id + ".jpg"; })
-
-                svg.select("#img_id").remove();
-                svg.append("text")
-                    .attr("id", "img_id")
-                    .attr("x", widthPlot + 64 + 64)
-                    .attr("y", 18)
-                    .attr("dy", ".35em")
-                    .style("text-anchor", "end")
-                    .text(function () { return "ID: " + d.id});
+                    .attr('width', 128)
+                    .attr('height', 128)
+                    .attr("xlink:href", function () { return "images/cifar/test/" + d.id + ".jpg"; })
             });
 
         // Put legend
-        var legend = svg.selectAll(".legend")
+        var legendCifar = svgCifar.selectAll(".legend")
             .data(color.domain())
             .enter().append("g")
             .attr("class", "legend")
             .attr("transform", function (d, i) { return "translate(0," + (18 + i * 20) + ")"; });
 
-        legend.append("rect")
+        legendCifar.append("rect")
             .attr("x", 32 + 8)
             .attr("y", 18)
             .attr("width", 18)
             .attr("height", 18)
             .style("fill", color);
 
-        legend.append("text")
+        legendCifar.append("text")
             .attr("x", 32)
             .attr("y", 18 + 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
-            .text(function (i) { return i; });
+            .text(function (i) { return labelsCifar[i]; });
 
         // Bottom left default
 
-        svg.append("text")
+        svgCifar.append("text")
             .attr("x", 32)
             .attr("y", height - 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
             .text("P(x) =");
 
-        svg.append("text")
+        svgCifar.append("text")
             .attr("id", "p_y")
             .attr("x", 64 - 4)
             .attr("y", height - 9)
@@ -225,14 +225,14 @@
 
         // Right p_y_c default
 
-        svg.append("text")
+        svgCifar.append("text")
             .attr("x", widthPlot + 64 + 8)
             .attr("y", 18)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
             .text("P(c = c' | x)");
 
-        legend.append("text")
+        legendCifar.append("text")
             .attr("id", "p_y_c")
             .attr("x", widthPlot + 64)
             .attr("y", 27)
@@ -240,7 +240,7 @@
             .style("text-anchor", "end")
             .text("?");
 
-        legend.append("rect")
+        legendCifar.append("rect")
             .attr("id", "p_y_c_rect")
             .attr("x", widthPlot + 81)
             .attr("y", 18)
@@ -249,12 +249,12 @@
             .style("opacity", 0.5)
             .style("fill", color);
 
-        legend.append("text")
-            .attr("x", widthPlot + 128 + 32)
+        legendCifar.append("text")
+            .attr("x", widthPlot + 128 + 32 + 16)
             .attr("y", 18 + 9)
             .attr("dy", ".35em")
             .style("text-anchor", "end")
-            .text(function (i) { return i; });
+            .text(function (i) { return labelsCifar[i]; });
 
         // Test
 
