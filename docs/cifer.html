@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <title>DarkSight - Demo</title>
+</head>
+
+
+<!-- Compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+<style>
+    body {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .dot {
+        stroke: #ecf0f1;
+    }
+</style>
+
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<body>
+<div>
+    <div class="col s12" style="width: 100vw !important;">
+        <ul class="tabs" style="display: flex; flex-direction: row; justify-content: space-around">
+            <li class="tab col s3">
+                <a href="./mnist.html">MNIST</a>
+            </li>
+            <li class="tab col s3">
+                <a class="active" href="./cifer.html">Cifar-10</a>
+            </li>
+            <li class="tab col s3">
+                <a href="./mnist_new.html">TEST</a>
+            </li>
+        </ul>
+    </div>
+    <div id="cifer—div" style="height: 80vh; width: 100vw;"></div>
+</div>
+
+</body>
+
+<script type="text/javascript" src="mnist.js"></script>
+
+<script>
+</script>
