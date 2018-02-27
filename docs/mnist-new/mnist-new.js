@@ -25,6 +25,7 @@ d3.csv("./res-mnist.csv", function(data) {
         temp['data'] = dataSet[l].map(function (d) {
             return [d.dim1, d.dim2];
         });
+        temp['animation'] = false;
         series.push(temp);
     });
     var option = {
