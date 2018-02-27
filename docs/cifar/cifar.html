@@ -34,13 +34,13 @@
     <div class="col s12" style="width: 100vw !important;">
         <ul class="tabs" style="display: flex; flex-direction: row; justify-content: space-around">
             <li class="tab col s3">
-                <a href="./mnist.html">MNIST</a>
+                <a href="../mnist/mnist.html">MNIST</a>
             </li>
             <li class="tab col s3">
                 <a class="active" href="./cifar.html">Cifar-10</a>
             </li>
             <li class="tab col s3">
-                <a href="./mnist_new.html">TEST</a>
+                <a href="../mnist-new/mnist_new.html">TEST</a>
             </li>
         </ul>
     </div>
@@ -182,7 +182,7 @@
                     .attr("y", 200 + 64)
                     .attr('width', 128)
                     .attr('height', 128)
-                    .attr("xlink:href", function () { return "images/cifar/test/" + d.id + ".jpg"; })
+                    .attr("xlink:href", function () { return "../images/cifar/test/" + d.id + ".jpg"; })
             });
 
         // Put legend
