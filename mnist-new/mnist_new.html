@@ -4,7 +4,7 @@
     <title>DarkSight - Demo</title>
 </head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-<script src="https://cdn.bootcss.com/echarts/4.0.2/echarts.js"></script>
+<script src="https://cdn.bootcss.com/echarts/4.0.2/echarts-en.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.js"></script>
 <style>
@@ -46,14 +46,22 @@
         font-size: 12px;
     }
     .chart-indicator-container {
-        width: 150px;
+        width: 160px;
     }
     .label-indicator {
         height: 30px;
         width: 120px;
         margin-left: 20px;
     }
+    .img-intro {
+        font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        margin-top: 50px;
+        color: #9F9F9F;
+    }
     .img-container {
+        margin-top: 20px;
         height: 200px;
         width: 200px;
         margin-left: 20px;
@@ -62,6 +70,11 @@
     .img-display {
         height: 100%;
         width: 100%;
+    }
+    .img-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 </style>
 <body>
@@ -82,78 +95,84 @@
     <div class="content-container">
         <div id="mnist_test" class="chart-container"></div>
         <div class="reactive-area">
+            <div class="intro">Introduction Area</div>
             <div class="label-container">
                 <span id="label-0"> 0 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-0" class="label-indicator"></div>
                 </div>
-                <span id="value-0" class="label-text"></span>
+                <span id="value-0" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-1"> 1 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-1" class="label-indicator"></div>
                 </div>
-                <span id="value-1" class="label-text"></span>
+                <span id="value-1" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-2"> 2 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-2" class="label-indicator"></div>
                 </div>
-                <span id="value-2" class="label-text"></span>
+                <span id="value-2" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-3"> 3 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-3" class="label-indicator"></div>
                 </div>
-                <span id="value-3" class="label-text"></span>
+                <span id="value-3" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-4"> 4 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-4" class="label-indicator"></div>
                 </div>
-                <span id="value-4" class="label-text"></span>
+                <span id="value-4" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-5"> 5 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-5" class="label-indicator"></div>
                 </div>
-                <span id="value-5" class="label-text"></span>
+                <span id="value-5" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-6"> 6 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-6" class="label-indicator"></div>
                 </div>
-                <span id="value-6" class="label-text"></span>
+                <span id="value-6" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-7"> 7 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-7" class="label-indicator"></div>
                 </div>
-                <span id="value-7" class="label-text"></span>
+                <span id="value-7" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-8"> 8 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-8" class="label-indicator"></div>
                 </div>
-                <span id="value-8" class="label-text"></span>
+                <span id="value-8" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
                 <span id="label-9"> 9 </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-9" class="label-indicator"></div>
                 </div>
-                <span id="value-9" class="label-text"></span>
+                <span id="value-9" class="label-text">？？？？？</span>
             </div>
-            <div class="img-container">
-                <img class="img-display" id="img-container"/>
+            <div class="img-area">
+                <div class="img-intro">
+                    Source Image Related
+                </div>
+                <div class="img-container">
+                    <img class="img-display" id="img-container"/>
+                </div>
             </div>
         </div>
     </div>

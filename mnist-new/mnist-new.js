@@ -38,7 +38,7 @@ d3.csv("./res-mnist.csv", function(data) {
     });
     var option = {
         grid: {
-            left: '5%',
+            left: '0',
             right: '5%',
             bottom: '5%',
             containLabel: true
@@ -60,11 +60,8 @@ d3.csv("./res-mnist.csv", function(data) {
         yAxis : {show: false},
         series : series
     };
-
     myChart.setOption(option);
     var colorMap = myChart.getOption().color;
-
-    console.log(colorMap.length);
 
     colorMap.forEach(function (el, i) {
         var _id = '#chart-label-' + i;
@@ -81,7 +78,7 @@ d3.csv("./res-mnist.csv", function(data) {
             var _label_id = "#label-" + i;
             var label_value_id = "#value-" + i;
             var new_width = 120*c + 'px';
-            $(label_indicator_id).css('width', new_width);
+            $(label_indicator_id).animate({'width': new_width});
             $(label_value_id).text(c);
             $(_label_id).css('font-size', '12px');
         });
