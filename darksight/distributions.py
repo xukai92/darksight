@@ -1,18 +1,7 @@
 ### Load libraries
 
-# Utility
-import csv
-import time
-import argparse
-import os
-import sys
-
-# Sci computing
 import numpy as np
 import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
 from torch.autograd import Variable
 
 from helper import *

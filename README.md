@@ -14,9 +14,11 @@ Download or clone this repository and put the folder `darksight` in the same pat
 
 #### Dependencies
 
-- PyTorch
-- NumPy
-- Matplotlib
+- Python 2.7.12
+- PyTorch 0.3.1
+  - PyTorch 0.2.x is not supported
+- NumPy 1.13.3
+- Matplotlib 2.0.2
 
 ### Demo
 

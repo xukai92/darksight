@@ -1,20 +1,6 @@
 ### Load libraries
 
-# Utility
-import csv
-import time
-import argparse
-import os
-import sys
-import json
-import urllib2
-
-# Sci computing
-import numpy as np
 import torch
-import torch.nn as nn
-import torch.optim as optim
-import torch.nn.functional as F
 from torch.autograd import Variable
 
 ### End of library loading
@@ -23,19 +9,19 @@ from torch.autograd import Variable
 
 def log_sum_exp_stable_vec(vec):
 
-    max_score = torch.max(vec, keepdim=True)
+    max_score, max_idx = torch.max(vec, 0, keepdim=True)
     max_vec = max_score.expand(vec.size())
 
-    return max_vec + torch.log(torch.sum(torch.exp(vec - max_vec), keepdim=True))
+    return max_vec + torch.log(torch.sum(torch.exp(vec - max_vec), 0, keepdim=True))
 
 def log_sum_exp_stable_mat(mat):
 
     n, _ = mat.size()
-    max_scores, max_idcs = torch.max(mat, dim=1)
+    max_scores, max_idcs = torch.max(mat, 1)
     max_scores = max_scores.view(n, -1)
     max_mat = max_scores.expand(mat.size())
 
-    return max_mat + torch.log(torch.sum(torch.exp(mat - max_mat), dim=1)).view(n, -1)
+    return max_mat + torch.log(torch.sum(torch.exp(mat - max_mat), 1)).view(n, -1)
 
 def sym_kl_div(P, Q):
 

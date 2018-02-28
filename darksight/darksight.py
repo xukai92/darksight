@@ -10,18 +10,12 @@ matplotlib.rcParams['ytick.direction'] = 'out'  # let y ticks to left y-axis
 from matplotlib.backends.backend_pdf import PdfPages
 
 # Utility
-import csv
 import time
-import argparse
-import os
-import sys
 
 # Sci computing
 import numpy as np
 import torch
-import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
 from torch.autograd import Variable
 
 from helper import *
@@ -328,13 +322,13 @@ class DarkSightGeneric:
         p_y_c, p_y = self.clf.posterior(y, return_Z=True)
         ids = Variable(torch.arange(0, N).view(N, 1).float())
 
-        res = torch.cat([ids,
-                        y.cpu(),
+        res = torch.cat((ids.data,
+                        y.data.cpu(),
                         label.view(N, 1).float(), 
-                        p_y.cpu(),
-                        p_y_c.cpu()], 
+                        p_y.data.cpu(),
+                        p_y_c.data.cpu()), 
                         1)
-        res = res.data.cpu().numpy()
+        res = res.cpu().numpy()
 
 
         np.savetxt(output_file_path, res, 
