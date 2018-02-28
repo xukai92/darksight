@@ -1,5 +1,4 @@
 var myChart = window.echarts.init(document.getElementById('mnist_test'));
-
 var dataSet = {};
 var orgininal = [];
 d3.csv("./res-mnist.csv", function(data) {
@@ -39,9 +38,9 @@ d3.csv("./res-mnist.csv", function(data) {
     });
     var option = {
         grid: {
-            left: '3%',
-            right: '7%',
-            bottom: '3%',
+            left: '5%',
+            right: '5%',
+            bottom: '5%',
             containLabel: true
         },
         toolbox: {
@@ -63,10 +62,29 @@ d3.csv("./res-mnist.csv", function(data) {
     };
 
     myChart.setOption(option);
+    var colorMap = myChart.getOption().color;
+
+    console.log(colorMap.length);
+
+    colorMap.forEach(function (el, i) {
+        var _id = '#chart-label-' + i;
+        $(_id).css('background-color', el);
+    });
 
     myChart.on('click', function (params) {
         var dataIndex = params['data'][2];
         console.log(params, orgininal[dataIndex]);
+        var dataPoint = orgininal[dataIndex];
+        $("#img-container").attr('src', '../images/mnist/test/' + dataPoint.id + '.jpg');
+        var label_id = "#label-" + dataPoint.label;
+        $(label_id).css('font-size', '16px');
+        dataPoint.p_y_.forEach(function (c, i) {
+            var label_indicator_id = "#chart-label-" + i;
+            var label_value_id = "#value-" + i;
+            var new_width = 120*c + 'px';
+            $(label_indicator_id).css('width', new_width);
+            $(label_value_id).text(c);
+        });
     });
 
 });
