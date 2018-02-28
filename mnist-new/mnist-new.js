@@ -24,7 +24,7 @@ d3.csv("./res-mnist.csv", function(data) {
             name: el.toString()
         }
     });
-    console.log(legends);
+
     labels.forEach(function (l, i) {
         var temp = {};
         temp['name'] = l;
@@ -70,7 +70,6 @@ d3.csv("./res-mnist.csv", function(data) {
 
     myChart.on('click', function (params) {
         var dataIndex = params['data'][2];
-        console.log(params, orgininal[dataIndex]);
         var dataPoint = orgininal[dataIndex];
         $("#img-container").attr('src', '../images/mnist/test/' + dataPoint.id + '.jpg');
         dataPoint.p_y_.forEach(function (c, i) {
@@ -81,10 +80,10 @@ d3.csv("./res-mnist.csv", function(data) {
             $(label_indicator_id).animate({'width': new_width});
             $(label_value_id).text(c);
             $(_label_id).css('font-size', '12px');
+            $(label_id).css('color', '#000');
         });
         var label_id = "#label-" + dataPoint.label;
-        $(label_id).css('font-size', '18px');
-        $(label_id).css('color', dataPoint.color);
+        $(label_id).animate({'font-size': '18px'});
     });
 
 });
