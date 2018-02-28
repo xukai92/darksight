@@ -19,7 +19,7 @@ var yAxisCifar = d3.svg.axis()
     .scale(y)
     .orient("left");
 
-var svgCifar = d3.select("#cifar_div").append("svg")
+var svgCifar = d3.select("#cifar-div").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")

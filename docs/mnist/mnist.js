@@ -19,7 +19,7 @@ var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
-var svg = d3.select("#mnist_div").append("svg")
+var svg = d3.select("#mnist-div").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -122,7 +122,7 @@ d3.csv("res-mnist.csv", function (error, data) {
                 .attr("y", 200 + 64)
                 .attr('width', 112)
                 .attr('height', 112)
-                .attr("xlink:href", function () { return "images/mnist/test/" + d.id + ".jpg"; })
+                .attr("xlink:href", function () { return "../images/mnist/test/" + d.id + ".jpg"; })
 
             svg.select("#img_id").remove();
             svg.append("text")

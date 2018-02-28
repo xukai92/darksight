@@ -1,0 +1,165 @@
+<meta charset="utf-8">
+
+<head>
+    <title>DarkSight - Demo</title>
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+<script src="https://cdn.bootcss.com/echarts/4.0.2/echarts.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="https://cdn.staticfile.org/jquery/3.2.1/jquery.js"></script>
+<style>
+    body {
+        font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .dot {
+        stroke: #ecf0f1;
+    }
+    .content-container {
+        width: 100vw !important;
+        display: flex;
+        flex-direction: row;
+    }
+    .chart-container {
+        height: 80vh;
+        width: 75%;
+        /*border: 1px dashed #00bcd4;*/
+    }
+    .reactive-area {
+        width: 25%;
+        /*border: 1px solid #00bcd4;*/
+    }
+    .label-container {
+        margin: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+    .label-text {
+        font-size: 12px;
+    }
+    .chart-indicator-container {
+        width: 150px;
+    }
+    .label-indicator {
+        height: 30px;
+        width: 120px;
+        margin-left: 20px;
+    }
+    .img-container {
+        height: 200px;
+        width: 200px;
+        margin-left: 20px;
+        background-color: #fafafa;
+    }
+    .img-display {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+<body>
+<div>
+    <div style="width: 100vw !important; height: 10vh;">
+        <ul class="tabs" style="display: flex; flex-direction: row; justify-content: space-around">
+            <li class="tab col s3">
+                <a href="../mnist/mnist.html">MNIST</a>
+            </li>
+            <li class="tab col s3">
+                <a href="../cifar/cifar.html">Cifar-10</a>
+            </li>
+            <li class="tab col s3">
+                <a class="active">TEST</a>
+            </li>
+        </ul>
+    </div>
+    <div class="content-container">
+        <div id="mnist_test" class="chart-container"></div>
+        <div class="reactive-area">
+            <div class="label-container">
+                <span id="label-0"> 0 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-0" class="label-indicator"></div>
+                </div>
+                <span id="value-0" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-1"> 1 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-1" class="label-indicator"></div>
+                </div>
+                <span id="value-1" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-2"> 2 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-2" class="label-indicator"></div>
+                </div>
+                <span id="value-2" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-3"> 3 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-3" class="label-indicator"></div>
+                </div>
+                <span id="value-3" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-4"> 4 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-4" class="label-indicator"></div>
+                </div>
+                <span id="value-4" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-5"> 5 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-5" class="label-indicator"></div>
+                </div>
+                <span id="value-5" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-6"> 6 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-6" class="label-indicator"></div>
+                </div>
+                <span id="value-6" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-7"> 7 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-7" class="label-indicator"></div>
+                </div>
+                <span id="value-7" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-8"> 8 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-8" class="label-indicator"></div>
+                </div>
+                <span id="value-8" class="label-text"></span>
+            </div>
+            <div class="label-container">
+                <span id="label-9"> 9 </span>
+                <div class="chart-indicator-container">
+                    <div id="chart-label-9" class="label-indicator"></div>
+                </div>
+                <span id="value-9" class="label-text"></span>
+            </div>
+            <div class="img-container">
+                <img class="img-display" id="img-container"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="mnist-new.js"></script>
+<script>
+
+</script>
