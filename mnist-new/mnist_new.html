@@ -64,13 +64,13 @@
         font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
         font-size: 14px;
         font-weight: 400;
-        margin-top: 50px;
+        margin-top: 30px;
         color: #9F9F9F;
     }
     .img-container {
         margin-top: 10px;
-        height: 200px;
-        width: 200px;
+        height: 180px;
+        width: 180px;
         margin-left: 20px;
         background-color: #fafafa;
     }
@@ -88,6 +88,10 @@
         flex-direction: row;
         justify-content: space-around;
         border-bottom: 1px solid #ddd;
+    }
+    .mnist-params {
+        font-size: 14px;
+        margin-left: 35px;
     }
 </style>
 <body>
@@ -108,7 +112,12 @@
     <div class="content-container">
         <div id="mnist_test" class="chart-container"></div>
         <div class="reactive-area">
-            <div class="intro">Introduction Area</div>
+            <div class="mnist-params">
+                <div>
+                    <span>P(x) = <span id="mnist-px">?</span></span>
+                </div>
+            </div>
+            <p style="margin-left: -5px;">P( c = c' | x)</p>
             <div class="label-container">
                 <span id="label-0" style="width: 18px"> 0 </span>
                 <div class="chart-indicator-container">

@@ -71,6 +71,7 @@ d3.csv("./res-mnist.csv", function(data) {
     myChart.on('click', function (params) {
         var dataIndex = params['data'][2];
         var dataPoint = orgininal[dataIndex];
+        console.log(params, dataPoint);
         $("#img-container").attr('src', '../images/mnist/test/' + dataPoint.id + '.jpg');
         dataPoint.p_y_.forEach(function (c, i) {
             var label_indicator_id = "#chart-label-" + i;
@@ -84,6 +85,7 @@ d3.csv("./res-mnist.csv", function(data) {
         });
         var label_id = "#label-" + dataPoint.label;
         $(label_id).animate({'font-size': '18px'});
+        $("#mnist-px").text(dataPoint.p_y);
     });
 
 });
