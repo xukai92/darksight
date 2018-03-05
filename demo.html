@@ -26,23 +26,24 @@
     .dot {
         stroke: #ecf0f1;
     }
+    .tabs-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        border-bottom: 1px solid #ddd;
+    }
 </style>
 <body>
-    <div class="row">
-        <div class="col s12">
-            <ul class="tabs">
-                <li class="tab col s3">
-                    <a class="active" href="mnist/mnist.html">MNIST</a>
-                </li>
-                <li class="tab col s3">
-                    <a href="cifar/cifar.html">Cifar-10</a>
-                </li>
-                <li class="tab col s3">
-                    <a href="mnist-new/mnist_new.html">TEST</a>
-                </li>
-            </ul>
-        </div>
-    </div>
+<div style="width: 100vw !important; height: 10vh;">
+    <ul class="tabs tabs-container">
+        <li class="tab col s3">
+            <a class="active">TEST</a>
+        </li>
+        <li class="tab col s3">
+            <a href="../cifar/cifar.html">Cifar-10</a>
+        </li>
+    </ul>
+</div>
 
 </body>
 

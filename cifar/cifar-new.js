@@ -1,7 +1,7 @@
-var myChart = window.echarts.init(document.getElementById('mnist_test'));
+var myChart = window.echarts.init(document.getElementById('cifar_test'));
 var dataSet = {};
 var orgininal = [];
-d3.csv("./res-mnist.csv", function(data) {
+d3.csv("./res-cifar.csv", function(data) {
     data.forEach(function(d, i) {
         d.id = Math.round(Number(+d.id));
         d.dim1 = +d.dim1;
@@ -72,7 +72,7 @@ d3.csv("./res-mnist.csv", function(data) {
         var dataIndex = params['data'][2];
         var dataPoint = orgininal[dataIndex];
         console.log(params, dataPoint);
-        $("#img-container").attr('src', '../images/mnist/test/' + dataPoint.id + '.jpg');
+        $("#img-container").attr('src', '../images/cifar/test/' + dataPoint.id + '.jpg');
         dataPoint.p_y_.forEach(function (c, i) {
             var label_indicator_id = "#chart-label-" + i;
             var _label_id = "#label-" + i;
