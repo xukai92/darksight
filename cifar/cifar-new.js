@@ -1,6 +1,7 @@
 var myChart = window.echarts.init(document.getElementById('cifar_test'));
 var dataSet = {};
 var orgininal = [];
+var labelsCifar = ["plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"];
 d3.csv("./res-cifar.csv", function(data) {
     data.forEach(function(d, i) {
         d.id = Math.round(Number(+d.id));
@@ -20,14 +21,15 @@ d3.csv("./res-cifar.csv", function(data) {
     var labels = Object.keys(dataSet);
     var series = [];
     var legends = labels.map(function (el) {
+        console.log(labelsCifar[el]);
         return {
-            name: el.toString()
+            name: labelsCifar[el]
         }
     });
 
     labels.forEach(function (l, i) {
         var temp = {};
-        temp['name'] = l;
+        temp['name'] = labelsCifar[parseInt(l)];
         temp['type'] = 'scatter';
         temp['symbolSize'] = 5;
         temp['data'] = dataSet[l].map(function (d) {

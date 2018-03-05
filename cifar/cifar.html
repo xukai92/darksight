@@ -97,6 +97,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-left: -50px;
     }
     .tabs-container {
         display: flex;
@@ -111,6 +112,9 @@
 </style>
 
 <script src="https://d3js.org/d3.v3.min.js"></script>
+<script>
+    var labelsCifar = ["plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"];
+</script>
 <body>
 <div>
     <div style="width: 100vw !important; height: 10vh;">
@@ -146,70 +150,70 @@
             </div>
             <p style="margin-left: -5px;">P( c = c' | x)</p>
             <div class="label-container">
-                <span id="label-0" style="width: 18px"> 0 </span>
+                <span id="label-0" style="width: 30px"> plane </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-0" class="label-indicator"></div>
                 </div>
                 <span id="value-0" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-1" style="width: 18px"> 1 </span>
+                <span id="label-1" style="width: 30px"> car </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-1" class="label-indicator"></div>
                 </div>
                 <span id="value-1" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-2" style="width: 18px"> 2 </span>
+                <span id="label-2" style="width: 30px"> bird </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-2" class="label-indicator"></div>
                 </div>
                 <span id="value-2" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-3" style="width: 18px"> 3 </span>
+                <span id="label-3" style="width: 30px"> cat </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-3" class="label-indicator"></div>
                 </div>
                 <span id="value-3" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-4" style="width: 18px"> 4 </span>
+                <span id="label-4" style="width: 30px"> deer </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-4" class="label-indicator"></div>
                 </div>
                 <span id="value-4" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-5" style="width: 18px"> 5 </span>
+                <span id="label-5" style="width: 30px"> dog </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-5" class="label-indicator"></div>
                 </div>
                 <span id="value-5" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-6" style="width: 18px"> 6 </span>
+                <span id="label-6" style="width: 30px"> frog </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-6" class="label-indicator"></div>
                 </div>
                 <span id="value-6" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-7" style="width: 18px"> 7 </span>
+                <span id="label-7" style="width: 30px"> horse </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-7" class="label-indicator"></div>
                 </div>
                 <span id="value-7" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-8" style="width: 18px"> 8 </span>
+                <span id="label-8" style="width: 30px"> ship </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-8" class="label-indicator"></div>
                 </div>
                 <span id="value-8" class="label-text">？？？？？</span>
             </div>
             <div class="label-container">
-                <span id="label-9" style="width: 18px;"> 9 </span>
+                <span id="label-9" style="width: 30px;"> truck </span>
                 <div class="chart-indicator-container">
                     <div id="chart-label-9" class="label-indicator"></div>
                 </div>
