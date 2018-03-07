@@ -1,210 +1,92 @@
-var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-    width = 1024 - margin.left - margin.right,
-    widthPlot = width - 256,
-    height = 512 - margin.top - margin.bottom;
-
-var color = d3.scale.category10();
-
-var x = d3.scale.linear()
-    .range([0, widthPlot]);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-var svg = d3.select("#mnist-div").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.csv("res-mnist.csv", function (error, data) {
-    if (error) throw error;
-
-    // Convert string to int
-    data.forEach(function (d) {
+var myChart = window.echarts.init(document.getElementById('mnist_test'));
+var dataSet = {};
+var orgininal = [];
+d3.csv("./res-mnist.csv", function(data) {
+    data.forEach(function(d, i) {
         d.id = Math.round(Number(+d.id));
         d.dim1 = +d.dim1;
         d.dim2 = +d.dim2;
+        d.index = i;
         d.label = parseInt(d.label_pred);
         d.p_y = +d.p_y;
         d.p_y_ = [+d.p_y_0, +d.p_y_1, +d.p_y_2, +d.p_y_3, +d.p_y_4,
-        +d.p_y_5, +d.p_y_6, +d.p_y_7, +d.p_y_8, +d.p_y_9];
+            +d.p_y_5, +d.p_y_6, +d.p_y_7, +d.p_y_8, +d.p_y_9];
+        if (!dataSet[d.label]) {
+            dataSet[d.label] = [];
+        }
+        orgininal.push(d);
+        dataSet[d.label].push(d);
+    });
+    var labels = Object.keys(dataSet);
+    var series = [];
+    var legends = labels.map(function (el) {
+        return {
+            name: el.toString()
+        }
     });
 
-    // Set x- and y-axis's range
-    x.domain(d3.extent(data, function (d) { return d.dim1; })).nice();
-    y.domain(d3.extent(data, function (d) { return d.dim2; })).nice();
-
-    // Set x-axis's label
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("x", widthPlot)
-        .attr("y", -6)
-        .style("text-anchor", "end")
-        .text("Dim 1");
-
-    // Set y-axis's label
-    svg.append("g")
-        .attr("class", "y axis")
-        .call(yAxis)
-        .append("text")
-        .attr("class", "label")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end")
-        .text("Dim 2")
-
-    // Make sactters
-    svg.selectAll(".dot")
-        .data(data)
-        .enter().append("circle")
-        .attr("class", "dot")
-        .attr("r", 4)
-        .attr("cx", function (d) { return x(d.dim1); })
-        .attr("cy", function (d) { return y(d.dim2); })
-        .style("fill", function (d) { return color(d.label); })
-        .on("click", function (d) {
-            legend.select("#p_y_c").remove();
-            legend.append("text")
-                .attr("id", "p_y_c")
-                .attr("x", widthPlot + 64)
-                .attr("y", 27)
-                .attr("dy", ".35em")
-                .style("text-anchor", "end")
-                .text(function (i) { return d.p_y_[i].toFixed(5); });
-
-            legend.selectAll("#p_y_c_rect").remove();
-            legend.append("rect")
-                .attr("id", "p_y_c_rect")
-                .attr("y", 18)
-                .attr("x", widthPlot + 81)
-                .attr("width", function (i) { return d.p_y_[i] * 64; })
-                .attr("height", 18)
-                .style("fill", color);
-
-            legend.append("rect")
-                .attr("id", "p_y_c_rect")
-                .attr("x", widthPlot + 81)
-                .attr("y", 18)
-                .attr("width", 64)
-                .attr("height", 18)
-                .style("opacity", 0.5)
-                .style("fill", color)
-                .style("stroke", "black")
-                .style("stroke-width", function (i) { if (d.label == i) return 1; else return 0; });
-
-            svg.select("#p_y").remove();
-            svg.append("text")
-                .attr("id", "p_y")
-                .attr("x", 64 + 12)
-                .attr("y", height - 9)
-                .attr("dy", ".35em")
-                .style("text-anchor", "end")
-                .text(function () { return "" + d.p_y.toFixed(5); });
-
-            svg.select("#x_img").remove();
-            svg.append("image")
-                .attr("id", "x_img")
-                .attr("x", widthPlot + 32)
-                .attr("y", 200 + 64)
-                .attr('width', 112)
-                .attr('height', 112)
-                .attr("xlink:href", function () { return "../images/mnist/test/" + d.id + ".jpg"; })
-
-            svg.select("#img_id").remove();
-            svg.append("text")
-                .attr("id", "img_id")
-                .attr("x", widthPlot + 64 + 64)
-                .attr("y", 18)
-                .attr("dy", ".35em")
-                .style("text-anchor", "end")
-                .text(function () { return "ID: " + d.id});
+    labels.forEach(function (l, i) {
+        var temp = {};
+        temp['name'] = l;
+        temp['type'] = 'scatter';
+        temp['symbolSize'] = 5;
+        temp['data'] = dataSet[l].map(function (d) {
+            return [d.dim1, d.dim2, d.index];
         });
+        // temp['animation'] = false;
+        series.push(temp);
+    });
+    var option = {
+        grid: {
+            left: '0',
+            right: '5%',
+            bottom: '5%',
+            containLabel: true
+        },
+        toolbox: {
+            feature: {
+                dataZoom: {},
+                brush: {
+                    type: ['rect', 'polygon', 'clear']
+                }
+            }
+        },
+        brush: {
+        },
+        legend: {
+            data: legends
+        },
+        xAxis : {show: false},
+        yAxis : {show: false},
+        series : series
+    };
+    myChart.setOption(option);
+    var colorMap = myChart.getOption().color;
 
-    // Put legend
-    var legend = svg.selectAll(".legend")
-        .data(color.domain())
-        .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function (d, i) { return "translate(0," + (18 + i * 20) + ")"; });
+    colorMap.forEach(function (el, i) {
+        var _id = '#chart-label-' + i;
+        $(_id).css('background-color', el);
+    });
 
-    legend.append("rect")
-        .attr("x", 32 + 8)
-        .attr("y", 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
-
-    legend.append("text")
-        .attr("x", 32)
-        .attr("y", 18 + 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(function (i) { return i; });
-
-    // Bottom left default
-
-    svg.append("text")
-        .attr("x", 32)
-        .attr("y", height - 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text("P(x) =");
-
-    svg.append("text")
-        .attr("id", "p_y")
-        .attr("x", 64 - 4)
-        .attr("y", height - 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text("?");
-
-    // Right p_y_c default
-
-    svg.append("text")
-        .attr("x", widthPlot + 64 + 8)
-        .attr("y", 18)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text("P(c = c' | x)");
-
-    legend.append("text")
-        .attr("id", "p_y_c")
-        .attr("x", widthPlot + 64)
-        .attr("y", 27)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text("?");
-
-    legend.append("rect")
-        .attr("id", "p_y_c_rect")
-        .attr("x", widthPlot + 81)
-        .attr("y", 18)
-        .attr("width", 64)
-        .attr("height", 18)
-        .style("opacity", 0.5)
-        .style("fill", color);
-
-    legend.append("text")
-        .attr("x", widthPlot + 128 + 32)
-        .attr("y", 18 + 9)
-        .attr("dy", ".35em")
-        .style("text-anchor", "end")
-        .text(function (i) { return i; });
-
-    // Test
+    myChart.on('click', function (params) {
+        var dataIndex = params['data'][2];
+        var dataPoint = orgininal[dataIndex];
+        console.log(params, dataPoint);
+        $("#img-container").attr('src', '../images/mnist/test/' + dataPoint.id + '.jpg');
+        dataPoint.p_y_.forEach(function (c, i) {
+            var label_indicator_id = "#chart-label-" + i;
+            var _label_id = "#label-" + i;
+            var label_value_id = "#value-" + i;
+            var new_width = 120*c + 'px';
+            $(label_indicator_id).animate({'width': new_width});
+            var f = parseFloat(c);
+            $(label_value_id).text(+(f.toFixed(6)));
+            $(_label_id).css('font-size', '12px');
+            $(label_id).css('color', '#000');
+        });
+        var label_id = "#label-" + dataPoint.label;
+        $(label_id).animate({'font-size': '18px'});
+        $("#mnist-px").text(dataPoint.p_y);
+    });
 
 });
