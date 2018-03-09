@@ -43,6 +43,9 @@ d3.csv("./res-mnist.csv", function(data) {
             bottom: '5%',
             containLabel: true
         },
+        dataZoom: {
+            type: 'inside'
+        },
         toolbox: {
             feature: {
                 dataZoom: {},
