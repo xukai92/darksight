@@ -21,7 +21,6 @@ d3.csv("./res-cifar.csv", function(data) {
     var labels = Object.keys(dataSet);
     var series = [];
     var legends = labels.map(function (el) {
-        console.log(labelsCifar[el]);
         return {
             name: labelsCifar[el]
         }
@@ -45,6 +44,28 @@ d3.csv("./res-cifar.csv", function(data) {
             bottom: '5%',
             containLabel: true
         },
+        dataZoom: [
+            {
+                type: 'slider',
+                show: true,
+                xAxisIndex: [0]
+            },
+            {
+                type: 'slider',
+                show: true,
+                yAxisIndex: [0]
+            },
+            {
+                type: 'inside',
+                show: true,
+                xAxisIndex: [0]
+            },
+            {
+                type: 'inside',
+                show: true,
+                yAxisIndex: [0]
+            }
+        ],
         toolbox: {
             feature: {
                 dataZoom: {},
