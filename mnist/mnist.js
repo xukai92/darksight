@@ -4,8 +4,8 @@ var orgininal = [];
 d3.csv("./res-mnist.csv", function(data) {
     data.forEach(function(d, i) {
         d.id = Math.round(Number(+d.id));
-        d.dim1 = +d.dim1;
-        d.dim2 = +d.dim2;
+        d.dim1 = parseFloat(d.dim1);
+        d.dim2 = parseFloat(d.dim2);
         d.index = i;
         d.label = parseInt(d.label_pred);
         d.p_y = +d.p_y;
@@ -31,7 +31,7 @@ d3.csv("./res-mnist.csv", function(data) {
         temp['type'] = 'scatter';
         temp['symbolSize'] = 5;
         temp['data'] = dataSet[l].map(function (d) {
-            return [d.dim1, d.dim2, d.index];
+            return [parseFloat(d.dim1), parseFloat(d.dim2), d.index];
         });
         // temp['animation'] = false;
         series.push(temp);
@@ -43,9 +43,28 @@ d3.csv("./res-mnist.csv", function(data) {
             bottom: '5%',
             containLabel: true
         },
-        dataZoom: {
-            type: 'inside'
-        },
+        dataZoom: [
+            {
+                type: 'slider',
+                show: true,
+                xAxisIndex: [0]
+            },
+            {
+                type: 'slider',
+                show: true,
+                yAxisIndex: [0]
+            },
+            {
+                type: 'inside',
+                show: true,
+                xAxisIndex: [0]
+            },
+            {
+                type: 'inside',
+                show: true,
+                yAxisIndex: [0]
+            }
+        ],
         toolbox: {
             feature: {
                 dataZoom: {},
