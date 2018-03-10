@@ -37,6 +37,7 @@
         <h1 class="header center teal-text text-lighten-2">DarkSight</h1>
         <div class="row center">
           <h5 class="header col s12 light">Interpreting Deep Classifier by Visual Distillation of Dark Knowledge</h5>
+          <h5><small><a class="white-text" href="http://xuk.ai/">Kai Xu</a>, <a class="white-text" href="https://sites.google.com/site/daehpark/">Dae Hoon Park</a>, <a class="white-text" href="http://www.yichang-cs.com/">Chang Yi</a> and <a class="white-text" href="http://homepages.inf.ed.ac.uk/csutton/">Charles Sutton</a></small></h5>
         </div>
         <!-- <div class="row center">
           <a href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light teal lighten-1">Get Started</a>
@@ -59,8 +60,7 @@
             Interpreting black box classifiers, such as deep
             networks, allows an analyst to validate a classifier
             before it is deployed in a high-stakes setting. A
-            natural idea is to visualize the deep network’s rep-
-            resentations, so as to “see what the network sees”.
+            natural idea is to visualize the deep network’s representations, so as to “see what the network sees”.
             In this paper, we demonstrate that standard dimension
             reduction methods in this setting can yield
             uninformative or even misleading visualizations.
@@ -102,7 +102,7 @@
         <!--   Icon Section   -->
         <div class="row">
 
-        <div class="col s12 m4">
+          <div class="col s12 m4">
             <div class="icon-block">
             <h2 class="center brown-text"><i class="material-icons">visibility</i></h2>
             <h5 class="center">Looking into LeNet on MNIST</h5>
@@ -111,9 +111,9 @@
                 <img class="materialboxed" data-caption="2D Scatter Plot for LeNet on MNIST" width="100%" src="./lenet-mnist.png">
             </p>
             </div>
-        </div>
+          </div>
 
-        <div class="col s12 m4">
+          <div class="col s12 m4">
             <div class="icon-block">
             <h2 class="center brown-text"><i class="material-icons">priority_high</i></h2>
             <h5 class="center">Outlier Detection</h5>
@@ -135,9 +135,9 @@
               <img data-caption="A picture of a way with a group of trees in a park" width="18%" src="./images/mnist/test/8326.jpg">
             </p>
             </div>
-        </div>
+          </div>
 
-        <div class="col s12 m4">
+          <div class="col s12 m4">
             <div class="icon-block">
                 <h2 class="center brown-text"><i class="material-icons">flash_on</i></h2>
                 <h5 class="center">Fast Training</h5>
@@ -148,7 +148,24 @@
                   DarkSight plot for a 10-class classifier on 10,000 instances can be generated within around 1.5 minutes with a single GPU.
                 </p>
             </div>
+          </div>
         </div>
+
+        <div class="row">
+          <div class="col s12 m12">
+            <h2 class="center brown-text">
+              <i class="medium material-icons">question_answer</i>
+            </h2>
+            <h5 class="center">Why Not t-SNE?</h5>
+            
+            <p class="light">
+              Most closely related work to ours is the proposal by <a href="https://cs.stanford.edu/people/karpathy/cnnembed/">Andrej Karpathy</a> to apply t-SNE to the features from the second
+              to last layer in a deep classifier, producing a two-dimensional embedding in which nearby data items have similar high-level
+              features according to the network. However, we observe that these plots can
+              be misleading because they contain well-separated clusters even when, in fact, there are many points nearby the decision
+              boundary.
+            </p>
+          </div>
         </div>
 
       </div>
@@ -172,11 +189,10 @@
         <div class="col l7 s12">
           <h5 class="white-text">Acknowledgement</h5>
           <p class="grey-text text-lighten-4">
-            We would like to specially thank Huawei Technologies Co. Ltd. for generously funding this project.
-            We thank Rich Caruana for his useful comments and suggestions on how to use DarkSight.
-            We also thank Cole Hurwitz for his careful grammar checking of the paper. 
+            We would like to specially thank the funding from Edinburgh Huawei Research Lab, which is generously provided by Huawei Technologies
+            Co. Ltd. We thank Rich Caruana for his useful comments and suggestions on how to use DarkSight. We also thank Cole Hurwitz
+            for his careful grammar checking of the paper, and Yiran Tao for his work on the demo of DarkSight.
           </p>
-
         </div>
 
         <div class="col l2 s12">
@@ -192,11 +208,15 @@
         <div class="col l3 s12">
           <h5 class="white-text">Connect</h5>
           <ul>
-              <li><a class="white-text" href="http://web.inf.ed.ac.uk/infweb/partners/edinburgh-huawei-research-lab">Edinburgh Huawei Research Lab</a></li>
-              <li><a class="white-text" href="http://groups.inf.ed.ac.uk/cup/">Charles's Uncertain People</a></li>
-              <li><a class="white-text" href="http://www.anc.ed.ac.uk/">Institute for Adaptive and Neural Computation, University of Edinburgh</a></li>
-
-              
+            <li>
+              <a class="white-text" href="http://www.anc.ed.ac.uk/">Institute for Adaptive and Neural Computation, University of Edinburgh</a>
+            </li>
+            <li>
+              <a class="white-text" href="http://web.inf.ed.ac.uk/infweb/partners/edinburgh-huawei-research-lab">Edinburgh Huawei Research Lab</a>
+            </li>
+            <li>
+              <a class="white-text" href="http://groups.inf.ed.ac.uk/cup/">Charles's Uncertain People</a>
+            </li>    
           </ul>
         </div>
       </div>
