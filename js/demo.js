@@ -1,16 +1,17 @@
-var myChart = window.echarts.init(document.getElementById('mnist_test'));
+var myChart = window.echarts.init(document.getElementById('demo_chart'));
 var dataSet = {};
 var orgininal = [];
-d3.csv("./res-mnist.csv", function(data) {
-    data.forEach(function(d, i) {
+
+d3.csv(dataCSV, function (data) {
+    data.forEach(function (d, i) {
         d.id = Math.round(Number(+d.id));
-        d.dim1 = parseFloat(d.dim1);
-        d.dim2 = parseFloat(d.dim2);
+        d.dim1 = +d.dim1;
+        d.dim2 = +d.dim2;
         d.index = i;
         d.label = parseInt(d.label_pred);
         d.p_y = +d.p_y;
         d.p_y_ = [+d.p_y_0, +d.p_y_1, +d.p_y_2, +d.p_y_3, +d.p_y_4,
-            +d.p_y_5, +d.p_y_6, +d.p_y_7, +d.p_y_8, +d.p_y_9];
+        +d.p_y_5, +d.p_y_6, +d.p_y_7, +d.p_y_8, +d.p_y_9];
         if (!dataSet[d.label]) {
             dataSet[d.label] = [];
         }
@@ -21,17 +22,17 @@ d3.csv("./res-mnist.csv", function(data) {
     var series = [];
     var legends = labels.map(function (el) {
         return {
-            name: el.toString()
+            name: labels[el]
         }
     });
 
     labels.forEach(function (l, i) {
         var temp = {};
-        temp['name'] = l;
+        temp['name'] = labels[parseInt(l)];
         temp['type'] = 'scatter';
         temp['symbolSize'] = 5;
         temp['data'] = dataSet[l].map(function (d) {
-            return [parseFloat(d.dim1), parseFloat(d.dim2), d.index];
+            return [d.dim1, d.dim2, d.index];
         });
         // temp['animation'] = false;
         series.push(temp);
@@ -78,9 +79,9 @@ d3.csv("./res-mnist.csv", function(data) {
         legend: {
             data: legends
         },
-        xAxis : {show: false},
-        yAxis : {show: false},
-        series : series
+        xAxis: { show: false },
+        yAxis: { show: false },
+        series: series
     };
     myChart.setOption(option);
     var colorMap = myChart.getOption().color;
@@ -94,21 +95,21 @@ d3.csv("./res-mnist.csv", function(data) {
         var dataIndex = params['data'][2];
         var dataPoint = orgininal[dataIndex];
         console.log(params, dataPoint);
-        $("#img-container").attr('src', '../images/mnist/test/' + dataPoint.id + '.jpg');
+        $("#img-container").attr('src', imgFolder + dataPoint.id + '.jpg');
         dataPoint.p_y_.forEach(function (c, i) {
             var label_indicator_id = "#chart-label-" + i;
             var _label_id = "#label-" + i;
             var label_value_id = "#value-" + i;
-            var new_width = 120*c + 'px';
-            $(label_indicator_id).animate({'width': new_width});
+            var new_width = 120 * c + 'px';
+            $(label_indicator_id).animate({ 'width': new_width });
             var f = parseFloat(c);
             $(label_value_id).text(+(f.toFixed(6)));
             $(_label_id).css('font-size', '12px');
             $(label_id).css('color', '#000');
         });
         var label_id = "#label-" + dataPoint.label;
-        $(label_id).animate({'font-size': '18px'});
-        $("#mnist-px").text(dataPoint.p_y);
+        $(label_id).animate({ 'font-size': '18px' });
+        $("#py").text(dataPoint.p_y);
     });
 
 });
