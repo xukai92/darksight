@@ -104,4 +104,4 @@ Parameters
 
 ## Contact
 
-Kai Xu is the first author of the corresponding paper and the maintainer of this library, feel free to contact him on the paper or the library by email: xu.kai@ed.ac.uk.
+Kai Xu is the first author of the corresponding paper and the maintainer of this library, feel free to contact him on the paper or the library by email: kai.xu@ed.ac.uk.
