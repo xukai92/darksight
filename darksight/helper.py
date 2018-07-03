@@ -1,7 +1,6 @@
 ### Load libraries
 
 import torch
-from torch.autograd import Variable
 
 ### End of library loading
 
@@ -39,10 +38,4 @@ def sym_kl_div_with_log_input(log_P, log_Q):
 
 def pt2np(pt):
 
-    if type(pt) == torch.autograd.variable.Variable:
-
-        return pt.cpu().data.numpy()
-
-    else:
-
-        return pt.cpu().numpy()
+    return pt.cpu().data.numpy()

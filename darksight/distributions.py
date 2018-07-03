@@ -2,7 +2,6 @@
 
 import numpy as np
 import torch
-from torch.autograd import Variable
 
 from helper import *
 
@@ -28,7 +27,7 @@ class Distribution:
 
         for i in range(len(self.params)):
 
-            self.params[i] = Variable(self.params[i], requires_grad=True)
+            self.params[i].requires_grad_()
 
     def ready(self, use_cuda, gpu_id):
 

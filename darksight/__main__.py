@@ -21,7 +21,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from torch.autograd import Variable
 
 from helper import *
 from distributions import *

@@ -16,7 +16,6 @@ import time
 import numpy as np
 import torch
 import torch.optim as optim
-from torch.autograd import Variable
 
 from helper import *
 from distributions import *
@@ -63,9 +62,6 @@ class Knowledge:
             self.logit = self.logit.cuda(gpu_id)
             self.log_p = self.log_p.cuda(gpu_id)
 
-        self.logit = Variable(self.logit, requires_grad=False)
-        self.log_p = Variable(self.log_p, requires_grad=False)
-
 
 
 class DarkSightGeneric:
@@ -96,7 +92,7 @@ class DarkSightGeneric:
 
             self._y = self._y.cuda(gpu_id)
 
-        self._y = Variable(self._y, requires_grad=True)
+        self._y.requires_grad_()
 
         self.klg.ready(use_cuda, gpu_id)
         self.clf.ready(use_cuda, gpu_id)
@@ -291,7 +287,7 @@ class DarkSightGeneric:
                 y_grid = y_grid.cuda(gpu_id)
             else:
                 y_grid = y_grid.cpu()
-            y_grid = Variable(y_grid, requires_grad=False)
+            y_grid.requires_grad_()
 
             # Compute p_y
             _, p_y = self.clf.posterior(y_grid, return_Z=True)
@@ -320,7 +316,7 @@ class DarkSightGeneric:
         label = torch.from_numpy(self.klg.label_pred_np)
 
         p_y_c, p_y = self.clf.posterior(y, return_Z=True)
-        ids = Variable(torch.arange(0, N).view(N, 1).float())
+        ids = torch.tensor(torch.arange(0, N).view(N, 1).float())
 
         res = torch.cat((ids.data,
                         y.data.cpu(),

@@ -4,6 +4,10 @@ DarkSight is a dimension reduction technique to visualize any black-box classifi
 
 Please visit [here](http://xuk.ai/darksight) for more information (the related paper, main results, exemplar visualization and demos).
 
+## NEWS
+
+*03 July 2018*: DarkSight is compatible with PyTorch 0.4.0 now!
+
 ## PyTorch Implementation
 
 This repository contains a PyTorch implementation of DarkSight.
@@ -16,8 +20,8 @@ Download or clone this repository and put the folder `darksight` in the same pat
 
 - Python 2.7.12
   - Python 3.x is **not** supported
-- PyTorch 0.3.1
-  - PyTorch 0.2.x is **not** supported
+- PyTorch 0.4.0
+  - PyTorch 0.2.x or 0.3.x **not** supported
 - NumPy 1.13.3
 - Matplotlib 2.0.2
 
