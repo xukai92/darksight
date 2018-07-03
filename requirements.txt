@@ -1,0 +1,4 @@
+python==2.7
+torch==4.0
+matplotlib>=2.0.2
+numpy>=1.13.3
