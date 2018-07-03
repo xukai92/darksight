@@ -191,7 +191,7 @@ class DarkSightGeneric:
                 optimizer_prior.step()
                 optimizer_cond.step() 
                 
-                loss_run += loss.data[0]
+                loss_run += loss.item()
                 iter_num += 1
                 
             log["loss"].append(loss_run / iter_num)
