@@ -170,6 +170,9 @@ class DarkSightGeneric:
                         torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N, C)
 
                     self.klg.log_p = logit_div_by_T - log_sum_exp_stable_mat(logit_div_by_T)       
+            else:
+
+                T = 1.0
             
             loss_run = 0
             iter_num = 0
