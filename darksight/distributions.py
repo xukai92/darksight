@@ -96,6 +96,7 @@ class Gaussian(NormalFamily):
 
         return p
 
+# This is a multivariate t-distribution with p = nu = 2
 class Student(NormalFamily):
 
     def logpdf(self, y):
@@ -122,28 +123,15 @@ class Student(NormalFamily):
 class Softmax(Distribution):
 
     def __init__(self, C):
-
         w = torch.ones([C]) * np.log(10)
-
         self.params = [w]
 
     @property
     def w(self):
-
         return self.params[0]
 
     def logpdf(self):
+        return self.w - torch.logsumexp(self.w, 0)
 
-        w, = self.params
-
-        lp = w - log_sum_exp_stable_vec(w)
-
-        return lp
-
-    def pdf(self):
-
-        w, = self.params
-
-        p = torch.exp(w) / torch.sum(torch.exp(w))
-
-        return p
+    def pdf(self):      
+        return torch.exp(self.logpdf())

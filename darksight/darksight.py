@@ -46,7 +46,7 @@ class Knowledge:
         p = torch.exp(logit_div_by_T) / torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N,C)
 
         # Log for numerical stability
-        log_p = logit_div_by_T - log_sum_exp_stable_mat(logit_div_by_T)
+        log_p = logit_div_by_T - torch.logsumexp(logit_div_by_T, 1, keepdim=True)
 
         self.N = N
         self.C = C
@@ -104,7 +104,7 @@ class DarkSightGeneric:
     @property
     def y(self):
 
-        return pt2np(self._y)
+        return self._y.cpu().data.numpy()
 
     def loss(self, a, b):
 
@@ -168,7 +168,7 @@ class DarkSightGeneric:
                     p = torch.exp(logit_div_by_T) / \
                         torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N, C)
 
-                    self.klg.log_p = logit_div_by_T - log_sum_exp_stable_mat(logit_div_by_T)       
+                    self.klg.log_p = logit_div_by_T - torch.logsumexp(logit_div_by_T, 1, keepdim=True)
             else:
 
                 T = 1.0
@@ -349,14 +349,14 @@ class DarkSight(DarkSightGeneric):
     @property
     def mu(self):
 
-        return pt2np(self.clf.like_dist.mu)
+        return self.clf.like_dist.mu.cpu().data.numpy()
 
     @property
     def H(self):
 
-        return pt2np(self.clf.like_dist.H)
+        return self.clf.like_dist.H.cpu().data.numpy()
 
     @property
     def w(self):
 
-        return pt2np(self.clf.prior_dist.w)
+        return self.clf.prior_dist.w.cpu().data.numpy()
