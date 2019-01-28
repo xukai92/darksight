@@ -1,7 +1,6 @@
 ### Load libraries
 
 import matplotlib
-matplotlib.use('Agg')           # for disabling graphical UI
 import matplotlib.pyplot as plt
 plt.style.use('seaborn')         # for better looking
 import matplotlib.cm as cm      # for generating color list
@@ -319,7 +318,7 @@ class DarkSightGeneric:
         label = torch.from_numpy(self.klg.label_pred_np)
 
         p_y_c, p_y = self.clf.posterior(y, return_Z=True)
-        ids = torch.tensor(torch.arange(0, N).view(N, 1).float())
+        ids = torch.arange(0, N).view(N, 1).float()
 
         res = torch.cat((ids.data,
                         y.data.cpu(),
@@ -341,6 +340,7 @@ class DarkSight(DarkSightGeneric):
     def __init__(self, klg, D=2):
 
         cond = Student(klg.C, D)
+#         cond = Gaussian(klg.C, D)
         prior = Softmax(klg.C)
         nb = NaiveBayes(cond, prior)
 
