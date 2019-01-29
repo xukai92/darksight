@@ -31,7 +31,7 @@ class Knowledge:
         self.T = T
 
         logit = torch.from_numpy(logit_np).float()
-        
+
         print("[Knowledge.__init__] {0} with size of {1} is loaded".format(type(logit), logit.size()))
 
         # Generate teacher's label
@@ -57,7 +57,7 @@ class Knowledge:
     def ready(self, use_cuda, gpu_id):
 
         if use_cuda:
-            
+
             self.logit = self.logit.cuda(gpu_id)
             self.log_p = self.log_p.cuda(gpu_id)
 
@@ -80,7 +80,7 @@ class DarkSightGeneric:
 
         mu = self.clf.like_dist.params[0]
         _, max_idcs = torch.max(self.klg.log_p, 1)
-        
+
         for i in range(self.klg.N):
 
             self._y[i, :] = mu[max_idcs[i]]
@@ -116,7 +116,7 @@ class DarkSightGeneric:
 
         return loss
 
-    def train(self, num_epoch, lrs, batch_size=1000, verbose_skip=100, 
+    def train(self, num_epoch, lrs, batch_size=1000, verbose_skip=100,
                     do_annealing=False, annealing_length=1000, highest_T=10, annealing_stepsize=100):
 
         N = self.klg.N
@@ -160,19 +160,19 @@ class DarkSightGeneric:
                 else:
 
                     do_update = False
-                    
+
                 if do_update:
 
                     logit_div_by_T = self.klg.logit / T
-                    
+
                     p = torch.exp(logit_div_by_T) / \
                         torch.sum(torch.exp(logit_div_by_T), 1).view(N, 1).expand(N, C)
 
                     self.klg.log_p = logit_div_by_T - torch.logsumexp(logit_div_by_T, 1, keepdim=True)
             else:
 
-                T = 1.0
-            
+                T = self.klg.T
+
             loss_run = 0
             iter_num = 0
 
@@ -181,21 +181,21 @@ class DarkSightGeneric:
                 optimizer_cond.zero_grad()
                 optimizer_y.zero_grad()
                 optimizer_prior.zero_grad()
-        
+
                 loss = self.loss(a, b)
                 loss.backward()
 
                 optimizer_y.step()
                 optimizer_prior.step()
-                optimizer_cond.step() 
-                
+                optimizer_cond.step()
+
                 loss_run += loss.item()
                 iter_num += 1
-                
+
             log["loss"].append(loss_run / iter_num)
-            
+
             if epoch % verbose_skip == 0:
-                
+
                 print(" %5d | %5.4f | %d" % (epoch, loss_run / iter_num, T))
 
         print("Time used: %f" % (time.time() - t))
@@ -235,7 +235,7 @@ class DarkSightGeneric:
 
         return fig, ax
 
-    def plot_y(self, color_on=True, mu_on=True, contour_on=False, labels=None, 
+    def plot_y(self, color_on=True, mu_on=True, contour_on=False, labels=None,
                      use_cuda=True, gpu_id=0, contour_slices=100, contour_num=5):
 
         y_np = self._y.data.cpu().numpy()
@@ -257,13 +257,13 @@ class DarkSightGeneric:
             for i in range(C):
                 mask_i = (label_pred_np == i)
                 plt.scatter(y_np[mask_i, 0], y_np[mask_i, 1], c=colors[i], label=labels[i], alpha=.9)
-                
+
         else:
-            
+
             plt.scatter(y_np[:,0], y_np[:,1], alpha=.9, label="y")
 
         if mu_on:
-            
+
             plt.scatter(mu_np[:,0], mu_np[:,1], marker="*", c="white", alpha=.75,
                         linewidths=1, s=200, edgecolors="black", label=r"$\mu$")
 
@@ -322,17 +322,17 @@ class DarkSightGeneric:
 
         res = torch.cat((ids.data,
                         y.data.cpu(),
-                        label.view(N, 1).float(), 
+                        label.view(N, 1).float(),
                         p_y.data.cpu(),
-                        p_y_c.data.cpu()), 
+                        p_y_c.data.cpu()),
                         1)
         res = res.cpu().numpy()
 
 
-        np.savetxt(output_file_path, res, 
-                   delimiter=',', 
+        np.savetxt(output_file_path, res,
+                   delimiter=',',
                    header="id,dim1,dim2,label_pred,p_y," + \
-                           ",".join(map(lambda i: "p_y_" + str(i), range(C))), 
+                           ",".join(map(lambda i: "p_y_" + str(i), range(C))),
                    comments="")
 
 class DarkSight(DarkSightGeneric):
