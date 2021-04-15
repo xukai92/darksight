@@ -2,7 +2,7 @@
 
 DarkSight is a dimension reduction technique to visualize any black-box classifier. 
 
-Please visit [here](http://xuk.ai/darksight) for more information (the related paper, main results, exemplar visualization and demos).
+Please visit [here](https://xukai92.github.io/darksight/) for more information (the related paper, main results, exemplar visualization and demos).
 
 ## NEWS
 
